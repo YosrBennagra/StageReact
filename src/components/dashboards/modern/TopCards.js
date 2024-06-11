@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Box, CardContent, Grid, Typography } from '@mui/material';
-
 import icon1 from '../../../assets/images/svgs/icon-connect.svg';
 import icon2 from '../../../assets/images/svgs/icon-user-male.svg';
 import icon3 from '../../../assets/images/svgs/icon-briefcase.svg';
@@ -12,46 +11,46 @@ import icon6 from '../../../assets/images/svgs/icon-speech-bubble.svg';
 
 const topcards = [
   {
-    href: '/user-profile',
-    icon: icon2,
-    title: 'Profile',
-    digits: '3,685',
-    bgcolor: 'primary',
-  },
-  {
     href: '/apps/blog/posts',
     icon: icon3,
-    title: 'Blog',
+    title: 'High Schools',
     digits: '256',
     bgcolor: 'warning',
   },
   {
-    href: '/apps/calendar',
-    icon: icon4,
-    title: 'Calendar',
-    digits: '932',
-    bgcolor: 'secondary',
+    href: '/apps/contacts',
+    icon: icon1,
+    title: 'Responsables',
+    digits: '48',
+    bgcolor: 'info',
   },
   {
-    href: '/apps/email',
-    icon: icon5,
-    title: 'Email',
-    digits: '$348K',
-    bgcolor: 'error',
+    href: '/user-profile',
+    icon: icon2,
+    title: 'Teachers',
+    digits: '3,685',
+    bgcolor: 'primary',
   },
   {
     href: '/apps/chats',
     icon: icon6,
-    title: 'Chats',
+    title: 'Students',
     digits: '96',
     bgcolor: 'success',
   },
   {
-    href: '/apps/contacts',
-    icon: icon1,
-    title: 'Contacts',
-    digits: '48',
-    bgcolor: 'info',
+    href: '/dashboard/assignments',
+    icon: icon5,
+    title: 'Assigments',
+    digits: '$348K',
+    bgcolor: 'error',
+  },
+  {
+    href: '/dashboard/requests',
+    icon: icon4,
+    title: 'Requests',
+    digits: '932',
+    bgcolor: 'secondary',
   },
 ];
 
