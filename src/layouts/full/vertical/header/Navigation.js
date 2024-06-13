@@ -109,6 +109,9 @@ const AppDD = () => {
       <Button color="inherit" sx={{color: (theme) => theme.palette.text.secondary}} variant="text" to="/apps/email" component={Link}>
         Email
       </Button>
+      <Button color="inherit" sx={{color: (theme) => theme.palette.text.secondary}} variant="text" to="/admin/dashboard" component={Link}>
+        My Dashboard
+      </Button>
     </>
   );
 };

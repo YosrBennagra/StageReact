@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Fab,
   Drawer,
@@ -10,10 +10,20 @@ import {
   Tooltip,
   IconButton,
   Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Button,
+  DialogActions,
+  MenuItem,
+  FormControlLabel,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Box from '@mui/material/Box';
-import { IconX, IconSettings, IconCheck } from '@tabler/icons';
+import { IconX, IconSettings, IconCheck, IconPlus } from '@tabler/icons';
 import {
   setTheme,
   setDir,
@@ -34,15 +44,19 @@ import CallToActionTwoToneIcon from '@mui/icons-material/CallToActionTwoTone';
 import ViewSidebarTwoToneIcon from '@mui/icons-material/ViewSidebarTwoTone';
 import WebAssetTwoToneIcon from '@mui/icons-material/WebAssetTwoTone';
 import { ViewComfyTwoTone, PaddingTwoTone, BorderOuter } from '@mui/icons-material';
-
+import { useLocation } from 'react-router';
+import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
+import CustomSelect from 'src/components/forms/theme-elements/CustomSelect';
+import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
 const SidebarWidth = '320px';
 
 const Customizer = () => {
   const [showDrawer, setShowDrawer] = useState(false);
   const customizer = useSelector((state) => state.customizer);
-
+  const location = useLocation();
+  console.log(location.pathname);
   const dispatch = useDispatch();
-
+  const [open, setOpen] = React.useState(false);
   const StyledBox = styled(Box)(({ theme }) => ({
     boxShadow: theme.shadows[8],
     padding: '20px',
@@ -88,7 +102,12 @@ const Customizer = () => {
       disp: 'ORANGE_THEME',
     },
   ];
-
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <div>
       {/* ------------------------------------------- */}
@@ -104,6 +123,71 @@ const Customizer = () => {
           <IconSettings stroke={1.5} />
         </Fab>
       </Tooltip>
+
+      {/* ------------------------------------------- */}
+      {
+        location.pathname === '/dashboard/assignments' && (<Tooltip title="Add">
+          <Fab
+            color="secondary"
+            aria-label="plus"
+            onClick={handleClickOpen}
+            sx={{ position: 'fixed', right: '100px', bottom: '15px' }}>
+            <IconPlus width={20} />
+          </Fab>
+        </Tooltip>)
+      }
+      {/* Dialog */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Creating A New Assignment</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please Select the Type of the assignment you want to create from the list below.
+          </DialogContentText>
+          <Box mt={2}>
+            <CustomTextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Assignment Name"
+              type="text"
+              fullWidth
+            />
+          </Box>
+          <Box
+            noValidate
+            component="form"
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              m: 'auto',
+              width: 'fit-content',
+            }}
+          >
+            <FormControl sx={{ mt: 2, minWidth: 120 }}>
+              <InputLabel htmlFor="assignment-type">Assignment Type</InputLabel>
+              <CustomSelect
+                autoFocus
+                value={1}
+                onChange={1}
+                label="assignment-type"
+                inputProps={{
+                  name: 'assignment-type',
+                  id: 'assignment-type',
+                }}
+              >
+                <MenuItem value="qc">QCM / QCU</MenuItem>
+                <MenuItem value="writing">WRITING</MenuItem>
+                <MenuItem value="qcw">QCM / QCU + WRITING</MenuItem>
+              </CustomSelect>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button color="error" onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Create</Button>
+        </DialogActions>
+      </Dialog>
+      {/* Dialog */}
       <Drawer
         anchor="right"
         open={showDrawer}

@@ -2,6 +2,7 @@ import React, { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import Loadable from '../layouts/full/shared/loadable/Loadable';
+import DashboardRequests from 'src/views/dashboards/requests/DashboardRequests';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -113,6 +114,12 @@ const Maintenance = Loadable(lazy(() => import('../views/authentication/Maintena
 // landingpage
 const Landingpage = Loadable(lazy(() => import('../views/pages/landingpage/Landingpage')));
 
+// dashboards 
+const DashboardAdmin = Loadable(lazy(() => import('../views/dashboards/DashboardAdmin')));
+const DashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/DashboardAssignments')));
+
+// assignments
+const CreateAssignment = Loadable(lazy(() => import('../views/pages/assignments/CreateAssignment')));
 const Router = [
   {
     path: '/',
@@ -121,6 +128,13 @@ const Router = [
       { path: '/', element: <Navigate to="/dashboards/modern" /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
+      
+      { path: '/admin/dashboard', exact: true, element: <DashboardAdmin /> },
+      { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },
+      { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
+
+      { path: '/create/assignment', element: <CreateAssignment /> },
+      
       { path: '/apps/chats', element: <Chats /> },
       { path: '/apps/notes', element: <Notes /> },
       { path: '/apps/calendar', element: <Calendar /> },

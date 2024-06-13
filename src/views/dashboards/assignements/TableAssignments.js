@@ -17,13 +17,13 @@ import {
   InputAdornment,
 } from '@mui/material';
 
-import Breadcrumb from '../../layouts/full/shared/breadcrumb/Breadcrumb';
-import PageContainer from '../../components/container/PageContainer';
-import { basicsTableData } from './tableData';
+import { basicsTableData } from '../../tables/tableData';
 
-import ParentCard from '../../components/shared/ParentCard';
 import ProductSearch from 'src/components/apps/ecommerce/productGrid/ProductSearch';
 import { IconSearch } from '@tabler/icons';
+import ParentCard from 'src/components/shared/ParentCard';
+import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
+import PageContainer from 'src/components/container/PageContainer';
 
 const basics = basicsTableData;
 const BCrumb = [
@@ -36,7 +36,7 @@ const BCrumb = [
   },
 ];
 
-const BasicTable = () => (
+const TableAssignments = () => (
   <PageContainer title="Basic Table" description="this is Basic Table page">
     {/* breadcrumb */}
     <Breadcrumb title="Basic Table" items={BCrumb} />
@@ -166,4 +166,4 @@ const BasicTable = () => (
   </PageContainer>
 );
 
-export default BasicTable;
+export default TableAssignments;
