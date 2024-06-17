@@ -52,6 +52,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           isTwoFactorAuthenticationEnabled,
           isEmailConfirmed,
           profilePicture,
+          role
         } = res.data;
 
         if (!isEmailConfirmed) {
@@ -64,6 +65,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             faSecret,
             isEmailConfirmed,
             profilePicture,
+            role
           );
           navigate('/auth/verify');
         } else if (isTwoFactorAuthenticationEnabled) {
@@ -79,6 +81,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
               isEmailConfirmed,
               profilePicture,
               formData,
+              role
             }),
           );
           navigate('/auth/two-steps2');
@@ -92,8 +95,9 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             faSecret,
             isEmailConfirmed,
             profilePicture,
+            role
           );
-          navigate('/');
+          navigate('/admin/dashboard');
         }
       }
     } catch (error) {
@@ -113,6 +117,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     faSecret,
     isEmailConfirmed,
     profilePicture,
+    role
   ) => {
     signIn({
       auth: {
@@ -128,6 +133,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         is2FaEnabled: false,
         isAccountVerified: isEmailConfirmed,
         profilePicture: profilePicture,
+        role
       },
     });
   };

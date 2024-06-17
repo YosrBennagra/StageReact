@@ -4,15 +4,20 @@ import { IconChevronDown } from '@tabler/icons';
 import AppLinks from 'src/layouts/full/vertical/header/AppLinks';
 import QuickLinks from 'src/layouts/full/vertical/header/QuickLinks';
 import DemosDD from './DemosDD';
+import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
+import Profile from 'src/layouts/full/vertical/header/Profile';
+import { Link } from 'react-router-dom';
+
 
 const Navigations = () => {
   const StyledButton = styled(Button)(({ theme }) => ({
     fontSize: '16px',
     color: theme.palette.text.secondary,
   }));
-
-  // demos
   const [open, setOpen] = useState(false);
+  const isAuthenticated = useIsAuthenticated();
+  console.log('isAuthenticated', isAuthenticated);
+
 
   const handleOpen = (event) => {
     setOpen(true);
@@ -119,9 +124,19 @@ const Navigations = () => {
       <StyledButton color="inherit" variant="text" href="#">
         Support
       </StyledButton>
-      <Button color="primary" target="_blank" variant="contained" href="#">
-        Buy Now
-      </Button>
+      {isAuthenticated ? (
+        <Profile />
+      ) : (
+        <Button
+          color="primary"
+          variant="contained"
+          to="/auth/login"
+          component={Link}
+          disableElevation
+        >
+          Sign In
+        </Button>
+      )}
     </>
   );
 };
