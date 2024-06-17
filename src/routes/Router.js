@@ -2,6 +2,9 @@ import React, { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import Loadable from '../layouts/full/shared/loadable/Loadable';
+import DashboardRequests from 'src/views/dashboards/requests/DashboardRequests';
+
+
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -102,25 +105,39 @@ const Login2 = Loadable(lazy(() => import('../views/authentication/auth2/Login2'
 const Register = Loadable(lazy(() => import('../views/authentication/auth1/Register')));
 const Register2 = Loadable(lazy(() => import('../views/authentication/auth2/Register2')));
 const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth1/ForgotPassword')));
-const ForgotPassword2 = Loadable(
-  lazy(() => import('../views/authentication/auth2/ForgotPassword2')),
-);
+const ForgotPassword2 = Loadable(lazy(() => import('../views/authentication/auth2/ForgotPassword2')),);
+const ResetPw = Loadable(lazy(() => import('../views/authentication/auth1/ResetPw')));
 const TwoSteps = Loadable(lazy(() => import('../views/authentication/auth1/TwoSteps')));
 const TwoSteps2 = Loadable(lazy(() => import('../views/authentication/auth2/TwoSteps2')));
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 const Maintenance = Loadable(lazy(() => import('../views/authentication/Maintenance')));
+const ClickToVerify = Loadable(lazy(() => import('../views/authentication/Confirm Email')));
+const VerifyMail = Loadable(lazy(() => import('../views/authentication/VerifiyEmail')));
 
 // landingpage
 const Landingpage = Loadable(lazy(() => import('../views/pages/landingpage/Landingpage')));
 
+// dashboards 
+const DashboardAdmin = Loadable(lazy(() => import('../views/dashboards/DashboardAdmin')));
+const DashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/DashboardAssignments')));
+
+// assignments
+const CreateAssignment = Loadable(lazy(() => import('../views/pages/assignments/CreateAssignment')));
 const Router = [
   {
     path: '/',
     element: <FullLayout />,
     children: [
-      { path: '/', element: <Navigate to="/dashboards/modern" /> },
+      { path: '/', element: <Navigate to="/landingpage" /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
+      
+      { path: '/admin/dashboard', exact: true, element: <DashboardAdmin /> },
+      { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },
+      { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
+
+      { path: '/create/assignment', element: <CreateAssignment /> },
+      
       { path: '/apps/chats', element: <Chats /> },
       { path: '/apps/notes', element: <Notes /> },
       { path: '/apps/calendar', element: <Calendar /> },
@@ -194,6 +211,9 @@ const Router = [
     element: <BlankLayout />,
     children: [
       { path: '/auth/404', element: <Error /> },
+      { path: '/auth/verify', element: <VerifyMail /> },
+      { path: '/auth/confirm/*', element: <ClickToVerify /> },
+      { path: '/auth/resetpw', element: <ResetPw /> },
       { path: '/auth/login', element: <Login /> },
       { path: '/auth/login2', element: <Login2 /> },
       { path: '/auth/register', element: <Register /> },
