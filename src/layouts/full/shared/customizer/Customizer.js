@@ -16,10 +16,7 @@ import {
   DialogContentText,
   Button,
   DialogActions,
-  MenuItem,
-  FormControlLabel,
-  FormControl,
-  InputLabel,
+  Alert,
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Box from '@mui/material/Box';
@@ -44,13 +41,36 @@ import CallToActionTwoToneIcon from '@mui/icons-material/CallToActionTwoTone';
 import ViewSidebarTwoToneIcon from '@mui/icons-material/ViewSidebarTwoTone';
 import WebAssetTwoToneIcon from '@mui/icons-material/WebAssetTwoTone';
 import { ViewComfyTwoTone, PaddingTwoTone, BorderOuter } from '@mui/icons-material';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
-import CustomSelect from 'src/components/forms/theme-elements/CustomSelect';
-import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
-const SidebarWidth = '320px';
 
+import axios from 'axios';
+
+
+
+const SidebarWidth = '320px';
+/* Assignemnt Form */
+/* Assignemnt Form */
 const Customizer = () => {
+  const navigate = useNavigate();
+  /* Assignemnt Form */
+  const [formData, setFormData] = React.useState({ title: '' });
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    console.log(formData)
+    navigate('')
+    try {
+      console.log("response")
+      const response = await axios.post(`http://localhost:3001/assignments`, formData);
+      console.log(response)
+
+    } catch (error) {
+      console.error('Creation error:', error.response.data.message);
+    }
+  }
+
+  /* Assignemnt Form */
   const [showDrawer, setShowDrawer] = useState(false);
   const customizer = useSelector((state) => state.customizer);
   const location = useLocation();
@@ -137,56 +157,42 @@ const Customizer = () => {
         </Tooltip>)
       }
       {/* Dialog */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Creating A New Assignment</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please Select the Type of the assignment you want to create from the list below.
-          </DialogContentText>
-          <Box mt={2}>
-            <CustomTextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Assignment Name"
-              type="text"
-              fullWidth
-            />
-          </Box>
-          <Box
-            noValidate
-            component="form"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              m: 'auto',
-              width: 'fit-content',
-            }}
-          >
-            <FormControl sx={{ mt: 2, minWidth: 120 }}>
-              <InputLabel htmlFor="assignment-type">Assignment Type</InputLabel>
-              <CustomSelect
-                autoFocus
-                value={1}
-                onChange={1}
-                label="assignment-type"
-                inputProps={{
-                  name: 'assignment-type',
-                  id: 'assignment-type',
-                }}
-              >
-                <MenuItem value="qc">QCM / QCU</MenuItem>
-                <MenuItem value="writing">WRITING</MenuItem>
-                <MenuItem value="qcw">QCM / QCU + WRITING</MenuItem>
-              </CustomSelect>
-            </FormControl>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button color="error" onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Create</Button>
-        </DialogActions>
-      </Dialog>
+      <>
+        <form >
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Creating A New Assignment</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please insert below the assignment name.
+              </DialogContentText>
+              <Box mt={2}>
+                <CustomTextField
+                  autoFocus
+                  margin="dense"
+                  id="title"
+                  label="Assignment name"
+                  type="text"
+                  fullWidth
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  required
+                  sx={{
+                    '& input:valid + fieldset': {
+                      borderColor: '#39cb7f',
+                    },
+                    '& input:invalid + fieldset': {
+                      borderColor: '#fc4b6c',
+                    },
+                  }}
+                />
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button color="error" onClick={handleClose}>Cancel</Button>
+              <Button color="success" onClick={onSubmit}>Create</Button>
+            </DialogActions>
+          </Dialog>
+        </form>
+      </>
       {/* Dialog */}
       <Drawer
         anchor="right"

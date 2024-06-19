@@ -136,7 +136,7 @@ const Router = [
       { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },
       { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
 
-      { path: '/create/assignment', element: <CreateAssignment /> },
+      { path: '/create/assignment/:id', element: <CreateAssignment /> },
       
       { path: '/apps/chats', element: <Chats /> },
       { path: '/apps/notes', element: <Notes /> },

@@ -1,4 +1,4 @@
-import { Box, Button, Grid, IconButton, InputAdornment, Tooltip } from "@mui/material";
+import { Box, Button, IconButton, InputAdornment, Tooltip } from "@mui/material";
 import { IconX, IconCheck, IconEdit, IconTrash } from "@tabler/icons";
 import React, { useState } from "react";
 import CustomFormLabel from "src/components/forms/theme-elements/CustomFormLabel";
@@ -6,17 +6,16 @@ import CustomOutlinedInput from "src/components/forms/theme-elements/CustomOutli
 import CustomTextField from "src/components/forms/theme-elements/CustomTextField";
 import ParentCard from "src/components/shared/ParentCard";
 
-export default function CreateQCM({ questionId, assignment, onDelete, onSave }) {
+export default function CreateQCU({ questionId, onDelete, onSave }) {
     const [answers, setAnswers] = useState([{ id: 1, text: '', correct: false }]);
     const [questionContent, setQuestionContent] = useState('');
-    const [questionScore, setQuestionScore] = useState(0);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isEditable, setIsEditable] = useState(true);
 
     const handleClickCorrect = (id) => {
         setAnswers((prevAnswers) =>
             prevAnswers.map((answer) =>
-                answer.id === id ? { ...answer, correct: !answer.correct } : answer
+                answer.id === id ? { ...answer, correct: true } : { ...answer, correct: false }
             )
         );
     };
@@ -28,23 +27,21 @@ export default function CreateQCM({ questionId, assignment, onDelete, onSave }) 
         ]);
     };
 
-    const handleDeleteAnswer = (id) => {
-        setAnswers((prevAnswers) => prevAnswers.filter((answer) => answer.id !== id));
-    };
-
     const handleConfirm = async () => {
-        const correctAnswers = answers.filter((answer) => answer.correct).map((answer) => answer.text);
+        const correctAnswer = answers.find((answer) => answer.correct);
         const options = answers.map((answer) => answer.text);
 
         const question = {
+            assignementId: '666c73f1d182018b1bd0d694', // Replace with the actual assignment ID
             content: questionContent,
             options,
-            correctAnswer: correctAnswers,
-            score: questionScore,
+            correctAnswer: correctAnswer ? correctAnswer.text : '',
+            type: 'qcu',
+            score: 0,
         };
 
-        const response = await fetch(`http://localhost:3001/questions/${questionId}`, {
-            method: 'PUT',
+        const response = await fetch('http://localhost:3001/questions', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -56,7 +53,6 @@ export default function CreateQCM({ questionId, assignment, onDelete, onSave }) 
             setIsEditable(false);
             onSave(questionId);
         } else {
-            // Handle error
             console.error('Failed to save the question');
         }
     };
@@ -71,6 +67,9 @@ export default function CreateQCM({ questionId, assignment, onDelete, onSave }) 
             title={`Question ${questionId}`}
             action={
                 <>
+                <CustomTextField
+                disabled={!isEditable}
+                />
                     {isConfirmed ? (
                         <IconButton onClick={handleEdit}>
                             <IconEdit color="#1a44ad" />
@@ -87,39 +86,18 @@ export default function CreateQCM({ questionId, assignment, onDelete, onSave }) 
             }
         >
             <form>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} sm={8}>
-                        <CustomFormLabel sx={{ mt: 0 }} htmlFor={`question-${questionId}`}>
-                            Question {questionId}
-                        </CustomFormLabel>
-                        <CustomTextField
-                            id={`question-${questionId}`}
-                            helperText="Please enter the question above."
-                            variant="outlined"
-                            fullWidth
-                            disabled={!isEditable}
-                            value={questionContent}
-                            onChange={(e) => setQuestionContent(e.target.value)}
-                            placeholder="Enter your question here"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <CustomFormLabel sx={{ mt: 0 }} htmlFor={`score-${questionId}`}>
-                            Score
-                        </CustomFormLabel>
-                        <CustomTextField
-                            id={`score-${questionId}`}
-                            helperText="Enter the score"
-                            variant="outlined"
-                            fullWidth
-                            disabled={!isEditable}
-                            placeholder="Score"
-                            value={questionScore}
-                            onChange={(e) => setQuestionScore(e.target.value)}
-                            type="number"
-                        />
-                    </Grid>
-                </Grid>
+                <CustomFormLabel sx={{ mt: 0 }} htmlFor={`question-${questionId}`}>
+                    Question {questionId}
+                </CustomFormLabel>
+                <CustomTextField
+                    id={`question-${questionId}`}
+                    helperText="Please enter the question above."
+                    variant="outlined"
+                    fullWidth
+                    disabled={!isEditable}
+                    value={questionContent}
+                    onChange={(e) => setQuestionContent(e.target.value)}
+                />
 
                 {answers.map((answer) => (
                     <div key={answer.id}>
@@ -149,9 +127,6 @@ export default function CreateQCM({ questionId, assignment, onDelete, onSave }) 
                             }
                             endAdornment={
                                 <InputAdornment position="end">
-                                    <IconButton onClick={() => handleDeleteAnswer(answer.id)} disabled={!isEditable}>
-                                        <IconTrash color="#b52222" />
-                                    </IconButton>
                                     <IconButton
                                         aria-label="toggle answer visibility"
                                         onClick={() => handleClickCorrect(answer.id)}
