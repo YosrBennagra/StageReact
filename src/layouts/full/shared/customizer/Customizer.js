@@ -58,17 +58,20 @@ const Customizer = () => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    console.log(formData)
-    navigate('')
+    console.log(formData);
     try {
-      console.log("response")
       const response = await axios.post(`http://localhost:3001/assignments`, formData);
-      console.log(response)
-
+      console.log(response);
+      
+      // Refresh the page
+      window.location.reload();
+  
     } catch (error) {
       console.error('Creation error:', error.response.data.message);
     }
   }
+  
+  
 
   /* Assignemnt Form */
   const [showDrawer, setShowDrawer] = useState(false);

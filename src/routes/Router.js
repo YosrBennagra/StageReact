@@ -119,6 +119,8 @@ const Landingpage = Loadable(lazy(() => import('../views/pages/landingpage/Landi
 
 // dashboards 
 const DashboardAdmin = Loadable(lazy(() => import('../views/dashboards/DashboardAdmin')));
+const DashboardStudent = Loadable(lazy(() => import('../views/dashboards/students/DashboardStudent')));
+
 const DashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/DashboardAssignments')));
 
 // assignments
@@ -133,6 +135,7 @@ const Router = [
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       
       { path: '/admin/dashboard', exact: true, element: <DashboardAdmin /> },
+      { path: '/dashboard/students', exact: true, element: <DashboardStudent /> },
       { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },
       { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
 

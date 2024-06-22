@@ -15,12 +15,15 @@ import {
   Stack,
   TextField,
   InputAdornment,
+  IconButton,
 } from '@mui/material';
 import axios from 'axios';
-import { IconSearch } from '@tabler/icons';
+import { IconEdit, IconSearch, IconTrash } from '@tabler/icons';
 import ParentCard from 'src/components/shared/ParentCard';
 import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
 import PageContainer from 'src/components/container/PageContainer';
+import { VerticalAlignCenter } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
 
 const BCrumb = [
   {
@@ -35,7 +38,7 @@ const BCrumb = [
 export default function DashboardAssignments() {
   const [assignments, setAssignments] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
@@ -53,6 +56,20 @@ export default function DashboardAssignments() {
     assignment.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleEdit = (id) => {
+    navigate(`/create/assignment/${id}`);
+  };
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/assignments/${id}`);
+      setAssignments((prevAssignments) =>
+        prevAssignments.filter((assignment) => assignment._id !== id)
+      );
+    } catch (error) {
+      console.error('Error deleting assignment:', error);
+    }
+  };
+  
   return (
     <PageContainer title="Assignments" description="This is the Assignments page">
       {/* breadcrumb */}
@@ -93,7 +110,16 @@ export default function DashboardAssignments() {
                     <Typography variant="h6">Description</Typography>
                   </TableCell>
                   <TableCell>
+                    <Typography variant="h6">Status</Typography>
+                  </TableCell>
+                  <TableCell>
                     <Typography variant="h6">Due Date</Typography>
+                  </TableCell>
+                  <TableCell >
+                    <Typography variant="h6"></Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="h6"></Typography>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -111,7 +137,46 @@ export default function DashboardAssignments() {
                       </Typography>
                     </TableCell>
                     <TableCell>
+                      <Chip
+                        sx={{
+                          bgcolor:
+                            assignment.status === 'open'
+                              ? (theme) => theme.palette.success.light
+                              : assignment.status === 'pending'
+                                ? (theme) => theme.palette.warning.light
+                                : assignment.status === 'ended'
+                                  ? (theme) => theme.palette.primary.light
+                                  : assignment.status === 'canceled'
+                                    ? (theme) => theme.palette.error.light
+                                    : (theme) => theme.palette.secondary.light,
+                          color:
+                            assignment.status === 'open'
+                              ? (theme) => theme.palette.success.main
+                              : assignment.status === 'pending'
+                                ? (theme) => theme.palette.warning.main
+                                : assignment.status === 'ended'
+                                  ? (theme) => theme.palette.primary.main
+                                  : assignment.status === 'canceled'
+                                    ? (theme) => theme.palette.error.main
+                                    : (theme) => theme.palette.secondary.main,
+                          borderRadius: "8px"
+                        }}
+                        size="small"
+                        label={assignment.status.toUpperCase()}
+                      />
+                    </TableCell>
+                    <TableCell>
                       <Typography variant="h6">{assignment.createAtdate}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton >
+                        <IconEdit onClick={() => { handleEdit(assignment._id) }} color="#1a44ad" />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton>
+                        <IconTrash onClick={() => { handleDelete(assignment._id) }} color="#b52222" />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

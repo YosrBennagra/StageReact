@@ -6,12 +6,21 @@ import CustomOutlinedInput from "src/components/forms/theme-elements/CustomOutli
 import CustomTextField from "src/components/forms/theme-elements/CustomTextField";
 import ParentCard from "src/components/shared/ParentCard";
 
-export default function CreateQCM({ questionId, assignment, onDelete, onSave }) {
-    const [answers, setAnswers] = useState([{ id: 1, text: '', correct: false }]);
-    const [questionContent, setQuestionContent] = useState('');
-    const [questionScore, setQuestionScore] = useState(0);
-    const [isConfirmed, setIsConfirmed] = useState(false);
-    const [isEditable, setIsEditable] = useState(true);
+export default function CreateQCM({ question, questionId, onDelete, onSave , assignment }) {
+    const initialAnswers = question && question.options ? 
+        question.options.map((option, index) => ({
+            id: index + 1,
+            text: option,
+            correct: question.correctAnswer.includes(option),
+        })) : [];
+    const initialContent = question && question.content ? question.content : '';
+    const initialScore = question && question.score ? question.score : 0;
+    const [answers, setAnswers] = useState(initialAnswers);
+    
+    const [questionContent, setQuestionContent] = useState(initialContent);
+    const [questionScore, setQuestionScore] = useState(initialScore);
+    const [isConfirmed, setIsConfirmed] = useState(true);
+    const [isEditable, setIsEditable] = useState(!question || !question.id);
 
     const handleClickCorrect = (id) => {
         setAnswers((prevAnswers) =>
@@ -35,20 +44,20 @@ export default function CreateQCM({ questionId, assignment, onDelete, onSave }) 
     const handleConfirm = async () => {
         const correctAnswers = answers.filter((answer) => answer.correct).map((answer) => answer.text);
         const options = answers.map((answer) => answer.text);
-
-        const question = {
+        const newQuestion = {
+            assignementId: assignment,  
             content: questionContent,
             options,
+            type: 'QCM',
             correctAnswer: correctAnswers,
             score: questionScore,
         };
-
         const response = await fetch(`http://localhost:3001/questions/${questionId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(question),
+            body: JSON.stringify(newQuestion),
         });
 
         if (response.ok) {
@@ -56,7 +65,6 @@ export default function CreateQCM({ questionId, assignment, onDelete, onSave }) 
             setIsEditable(false);
             onSave(questionId);
         } else {
-            // Handle error
             console.error('Failed to save the question');
         }
     };

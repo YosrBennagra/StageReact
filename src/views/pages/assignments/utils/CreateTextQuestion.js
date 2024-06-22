@@ -1,24 +1,26 @@
-import { IconButton } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import { IconEdit, IconTrash, IconCheck } from "@tabler/icons";
 import React, { useState } from "react";
 import CustomFormLabel from "src/components/forms/theme-elements/CustomFormLabel";
 import CustomTextField from "src/components/forms/theme-elements/CustomTextField";
 import ParentCard from "src/components/shared/ParentCard";
 
-export default function CreateTextQuestion({ questionId, onDelete, onSave }) {
-    const [questionContent, setQuestionContent] = useState('');
-    const [answer, setAnswer] = useState('');
-    const [isConfirmed, setIsConfirmed] = useState(false);
-    const [isEditable, setIsEditable] = useState(true);
+export default function CreateTextQuestion({ question, questionId, onDelete, onSave, assignment }) {
+    const initialContent = question && question.content ? question.content : '';
+    const initialScore = question && question.score ? question.score : 0;
+    const initialAnswer = question && question.options && question.options.length > 0 ? question.options[0] : '';
+    const [questionContent, setQuestionContent] = useState(initialContent);
+    const [questionScore, setQuestionScore] = useState(initialScore);
+    const [answer, setAnswer] = useState(initialAnswer);
+    const [isConfirmed, setIsConfirmed] = useState(true);
+    const [isEditable, setIsEditable] = useState(!question || !question.id);
 
     const handleConfirm = async () => {
-        const question = {
-            assignementId: '666c73f1d182018b1bd0d694', // Replace with the actual assignment ID
+        const newQuestion = {
+            assignementId: assignment,  
             content: questionContent,
-            options: [],
-            correctAnswer: answer,
-            type: 'text',
-            score: 0,
+            type: 'TEXT',
+            score: questionScore,
         };
 
         const response = await fetch('http://localhost:3001/questions', {
@@ -26,7 +28,7 @@ export default function CreateTextQuestion({ questionId, onDelete, onSave }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(question),
+            body: JSON.stringify(newQuestion),
         });
 
         if (response.ok) {
@@ -34,7 +36,6 @@ export default function CreateTextQuestion({ questionId, onDelete, onSave }) {
             setIsEditable(false);
             onSave(questionId);
         } else {
-            // Handle error
             console.error('Failed to save the question');
         }
     };
@@ -65,18 +66,39 @@ export default function CreateTextQuestion({ questionId, onDelete, onSave }) {
             }
         >
             <form>
-                <CustomFormLabel sx={{ mt: 0 }} htmlFor={`question-${questionId}`}>
-                    Question {questionId}
-                </CustomFormLabel>
-                <CustomTextField
-                    id={`question-${questionId}`}
-                    helperText="Please enter the question above."
-                    variant="outlined"
-                    fullWidth
-                    disabled={!isEditable}
-                    value={questionContent}
-                    onChange={(e) => setQuestionContent(e.target.value)}
-                />
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={8}>
+                        <CustomFormLabel sx={{ mt: 0 }} htmlFor={`question-${questionId}`}>
+                            Question {questionId}
+                        </CustomFormLabel>
+                        <CustomTextField
+                            id={`question-${questionId}`}
+                            helperText="Please enter the question above."
+                            variant="outlined"
+                            fullWidth
+                            disabled={!isEditable}
+                            value={questionContent}
+                            onChange={(e) => setQuestionContent(e.target.value)}
+                            placeholder="Enter your question here"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <CustomFormLabel sx={{ mt: 0 }} htmlFor={`score-${questionId}`}>
+                            Score
+                        </CustomFormLabel>
+                        <CustomTextField
+                            id={`score-${questionId}`}
+                            helperText="Enter the score"
+                            variant="outlined"
+                            fullWidth
+                            disabled={!isEditable}
+                            placeholder="Score"
+                            value={questionScore}
+                            onChange={(e) => setQuestionScore(e.target.value)}
+                            type="number"
+                        />
+                    </Grid>
+                </Grid>
                 <CustomFormLabel sx={{ mt: 2 }} htmlFor={`text-answer-${questionId}`}>
                     Answer
                 </CustomFormLabel>

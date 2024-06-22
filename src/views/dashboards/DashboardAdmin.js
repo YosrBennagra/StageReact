@@ -36,7 +36,7 @@ const topcards = [
     roles: ['admin', 'responsable']
   },
   {
-    href: '/apps/chats',
+    href: '/dashboard/students',
     icon: icon6,
     title: 'Students',
     digits: '96',
@@ -56,6 +56,14 @@ const topcards = [
     icon: icon4,
     title: 'Requests',
     digits: '932',
+    bgcolor: 'secondary',
+    roles: ['admin', 'teacher']
+  },
+  {
+    href: '/dashboard/requests',
+    icon: icon4,
+    title: 'Groups',
+    digits: '67',
     bgcolor: 'secondary',
     roles: ['admin', 'teacher']
   },

@@ -8,13 +8,16 @@ import { Box, Button, Tooltip, MenuItem, Select, FormControl, InputLabel } from 
 
 export default function CreateAssignment() {
     const [questions, setQuestions] = useState([]);
-    const [questionType, setQuestionType] = useState('QCM'); 
+    const [questionType, setQuestionType] = useState('QCM');
     const { id } = useParams();
-    console.log("id", id);
-    
+
     const BCrumb = [
         {
-            to: '/',
+            to: '/admin/dashboard',
+            title: 'Dashboard',
+        },
+        {
+            to: '/dashboard/assignments',
             title: 'Assignments',
         },
         {
@@ -24,19 +27,24 @@ export default function CreateAssignment() {
 
     useEffect(() => {
         const fetchQuestions = async () => {
-            const response = await fetch(`http://localhost:3001/questions/assignment/${id}`);
-            if (response.ok) {
-                const fetchedQuestions = await response.json();
-                setQuestions(fetchedQuestions.map((q) => ({
-                    id: q._id,
-                    type: q.type,
-                    content: q.content,
-                    options: q.options,
-                    correctAnswer: q.correctAnswer,
-                    score: q.score
-                })));
-            } else {
-                console.error('Failed to fetch questions');
+            try {
+                const response = await fetch(`http://localhost:3001/questions/assignment/${id}`);
+                if (response.ok) {
+                    const fetchedQuestions = await response.json();
+                    console.log('Fetched Questions:', fetchedQuestions); 
+                    setQuestions(fetchedQuestions.map((q) => ({
+                        id: q._id,
+                        type: q.type,
+                        content: q.content,
+                        options: q.options,
+                        correctAnswer: q.correctAnswer,
+                        score: q.score
+                    })));
+                } else {
+                    console.error('Failed to fetch questions');
+                }
+            } catch (error) {
+                console.error('Error fetching questions:', error);
             }
         };
         fetchQuestions();
@@ -52,34 +60,41 @@ export default function CreateAssignment() {
             score: 0
         };
 
-        const response = await fetch('http://localhost:3001/questions/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newQuestion),
-        });
+        try {
+            const response = await fetch('http://localhost:3001/questions/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newQuestion),
+            });
 
-        if (response.ok) {
-            const savedQuestion = await response.json();
-            setQuestions((prevQuestions) => [
-                ...prevQuestions,
-                { id: savedQuestion._id, type: questionType },
-            ]);
-        } else {
-            console.error('Failed to add the question');
+            if (response.ok) {
+                const savedQuestion = await response.json();
+                setQuestions((prevQuestions) => [
+                    ...prevQuestions,
+                    { id: savedQuestion._id, type: questionType },
+                ]);
+            } else {
+                console.error('Failed to add the question');
+            }
+        } catch (error) {
+            console.error('Error adding question:', error);
         }
     };
 
     const handleDeleteQuestion = async (questionId) => {
-        const response = await fetch(`http://localhost:3001/questions/${questionId}`, {
-            method: 'DELETE',
-        });
-
-        if (response.ok) {
-            setQuestions((prevQuestions) => prevQuestions.filter(q => q.id !== questionId));
-        } else {
-            console.error('Failed to delete the question');
+        try {
+            const response = await fetch(`http://localhost:3001/questions/${questionId}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setQuestions((prevQuestions) => prevQuestions.filter(q => q.id !== questionId));
+            } else {
+                console.error('Failed to delete the question');
+            }
+        } catch (error) {
+            console.error('Error deleting question:', error);
         }
     };
 
@@ -98,13 +113,16 @@ export default function CreateAssignment() {
     return (
         <>
             <Breadcrumb title="Creating An Assignment" items={BCrumb} />
-            {questions.map((question) => (
-                <Box key={question.id} sx={{ mb: 4 }}>
-                    {question.type === 'QCM' && <CreateQCM questionId={question.id} assignment={id} onDelete={handleDeleteQuestion} onSave={handleSaveQuestion} />}
-                    {question.type === 'QCU' && <CreateQCU questionId={question.id} assignment={id} onDelete={handleDeleteQuestion} onSave={handleSaveQuestion} />}
-                    {question.type === 'TEXT' && <CreateTextQuestion questionId={question.id} assignment={id} onDelete={handleDeleteQuestion} onSave={handleSaveQuestion} />}
-                </Box>
-            ))}
+            {questions.map((question) => {
+                console.log(`Rendering ${question.type} question with id ${question.id}`);
+                return (
+                    <Box key={question.id} sx={{ mb: 4 }}>
+                        {question.type === 'QCM' && <CreateQCM question={question} questionId={question.id} assignment={id} onDelete={handleDeleteQuestion} onSave={handleSaveQuestion} />}
+                        {question.type === 'QCU' && <CreateQCU question={question} questionId={question.id} assignment={id} onDelete={handleDeleteQuestion} onSave={handleSaveQuestion} />}
+                        {question.type === 'TEXT' && <CreateTextQuestion question={question} questionId={question.id} assignment={id} onDelete={handleDeleteQuestion} onSave={handleSaveQuestion} />}
+                    </Box>
+                );
+            })}
             <FormControl variant="outlined" fullWidth sx={{ mb: 2 }}>
                 <InputLabel id="question-type-label">Question Type</InputLabel>
                 <Select

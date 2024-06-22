@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, InputAdornment, Tooltip } from "@mui/material";
+import { Box, Button, Grid, IconButton, InputAdornment, Tooltip } from "@mui/material";
 import { IconX, IconCheck, IconEdit, IconTrash } from "@tabler/icons";
 import React, { useState } from "react";
 import CustomFormLabel from "src/components/forms/theme-elements/CustomFormLabel";
@@ -6,11 +6,21 @@ import CustomOutlinedInput from "src/components/forms/theme-elements/CustomOutli
 import CustomTextField from "src/components/forms/theme-elements/CustomTextField";
 import ParentCard from "src/components/shared/ParentCard";
 
-export default function CreateQCU({ questionId, onDelete, onSave }) {
-    const [answers, setAnswers] = useState([{ id: 1, text: '', correct: false }]);
-    const [questionContent, setQuestionContent] = useState('');
-    const [isConfirmed, setIsConfirmed] = useState(false);
-    const [isEditable, setIsEditable] = useState(true);
+export default function CreateQCU({ question, questionId, onDelete, onSave, assignment }) {
+    const initialAnswers = question && question.options ?
+        question.options.map((option, index) => ({
+            id: index + 1,
+            text: option,
+            correct: question.correctAnswer.includes(option),
+        })) : [];
+    const initialContent = question && question.content ? question.content : '';
+    const initialScore = question && question.score ? question.score : 0;
+    const [answers, setAnswers] = useState(initialAnswers);
+
+    const [questionContent, setQuestionContent] = useState(initialContent);
+    const [questionScore, setQuestionScore] = useState(initialScore);
+    const [isConfirmed, setIsConfirmed] = useState(true);
+    const [isEditable, setIsEditable] = useState(!question || !question.id);
 
     const handleClickCorrect = (id) => {
         setAnswers((prevAnswers) =>
@@ -31,13 +41,13 @@ export default function CreateQCU({ questionId, onDelete, onSave }) {
         const correctAnswer = answers.find((answer) => answer.correct);
         const options = answers.map((answer) => answer.text);
 
-        const question = {
-            assignementId: '666c73f1d182018b1bd0d694', // Replace with the actual assignment ID
+        const newQuestion = {
+            assignementId: assignment, 
             content: questionContent,
             options,
             correctAnswer: correctAnswer ? correctAnswer.text : '',
-            type: 'qcu',
-            score: 0,
+            score: questionScore,
+            type: 'QCU',
         };
 
         const response = await fetch('http://localhost:3001/questions', {
@@ -45,7 +55,7 @@ export default function CreateQCU({ questionId, onDelete, onSave }) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(question),
+            body: JSON.stringify(newQuestion),
         });
 
         if (response.ok) {
@@ -67,9 +77,6 @@ export default function CreateQCU({ questionId, onDelete, onSave }) {
             title={`Question ${questionId}`}
             action={
                 <>
-                <CustomTextField
-                disabled={!isEditable}
-                />
                     {isConfirmed ? (
                         <IconButton onClick={handleEdit}>
                             <IconEdit color="#1a44ad" />
@@ -86,18 +93,39 @@ export default function CreateQCU({ questionId, onDelete, onSave }) {
             }
         >
             <form>
-                <CustomFormLabel sx={{ mt: 0 }} htmlFor={`question-${questionId}`}>
-                    Question {questionId}
-                </CustomFormLabel>
-                <CustomTextField
-                    id={`question-${questionId}`}
-                    helperText="Please enter the question above."
-                    variant="outlined"
-                    fullWidth
-                    disabled={!isEditable}
-                    value={questionContent}
-                    onChange={(e) => setQuestionContent(e.target.value)}
-                />
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={8}>
+                        <CustomFormLabel sx={{ mt: 0 }} htmlFor={`question-${questionId}`}>
+                            Question {questionId}
+                        </CustomFormLabel>
+                        <CustomTextField
+                            id={`question-${questionId}`}
+                            helperText="Please enter the question above."
+                            variant="outlined"
+                            fullWidth
+                            disabled={!isEditable}
+                            value={questionContent}
+                            onChange={(e) => setQuestionContent(e.target.value)}
+                            placeholder="Enter your question here"
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <CustomFormLabel sx={{ mt: 0 }} htmlFor={`score-${questionId}`}>
+                            Score
+                        </CustomFormLabel>
+                        <CustomTextField
+                            id={`score-${questionId}`}
+                            helperText="Enter the score"
+                            variant="outlined"
+                            fullWidth
+                            disabled={!isEditable}
+                            placeholder="Score"
+                            value={questionScore}
+                            onChange={(e) => setQuestionScore(e.target.value)}
+                            type="number"
+                        />
+                    </Grid>
+                </Grid>
 
                 {answers.map((answer) => (
                     <div key={answer.id}>
