@@ -1,11 +1,11 @@
 import React from 'react';
-import TopCards from 'src/components/dashboards/modern/TopCards';
 import icon1 from '../../assets/images/svgs/icon-connect.svg';
 import icon2 from '../../assets/images/svgs/icon-user-male.svg';
 import icon3 from '../../assets/images/svgs/icon-briefcase.svg';
 import icon4 from '../../assets/images/svgs/icon-mailbox.svg';
 import icon5 from '../../assets/images/svgs/icon-favorites.svg';
 import icon6 from '../../assets/images/svgs/icon-speech-bubble.svg';
+import iconGroup from '../../assets/images/svgs/icon-group.svg';
 import { Box, CardContent, Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
@@ -61,7 +61,7 @@ const topcards = [
   },
   {
     href: '/dashboard/requests',
-    icon: icon4,
+    icon: iconGroup,
     title: 'Groups',
     digits: '67',
     bgcolor: 'secondary',
