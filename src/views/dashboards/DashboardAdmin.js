@@ -60,7 +60,7 @@ const topcards = [
     roles: ['admin', 'teacher']
   },
   {
-    href: '/dashboard/requests',
+    href: '/dashboard/groups',
     icon: iconGroup,
     title: 'Groups',
     digits: '67',

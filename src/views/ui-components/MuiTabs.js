@@ -96,7 +96,7 @@ const MuiTabs = () => {
                 </Tabs>
                 <Box bgcolor="grey.A200" mt={2}>
                   {COMMON_TAB.map((panel, index) => (
-                    <TabPanel key={panel.value} value={panel.value} >
+                    <TabPanel key={panel.value} value={panel.value}  >
                       {panel.label}
                     </TabPanel>
                   ))}
