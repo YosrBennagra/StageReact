@@ -11,7 +11,9 @@ import {
 } from '@mui/material';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import {
+  IconEdit,
   IconFolder,
+  IconTrash,
 } from '@tabler/icons';
 
 import GroupCreate from './GroupCreate';
@@ -24,6 +26,8 @@ const GroupsLeftLayout = () => {
   const dispatch = useDispatch();
   const [groups, setGroups] = useState([]);
   const allGroups = useSelector((state) => state.groups.groups);
+  const active = useSelector((state) => state.groups.selectedGroup);
+  console.log("active", active)
   const user = useAuthUser()
   console.log("auth", user)
   useEffect(() => {
@@ -63,14 +67,17 @@ const GroupsLeftLayout = () => {
           <Divider sx={{ my: 0 }} />
           {groups.map((group) => (
             <ListItemButton
+              selected={active === group._id}
               key={group._id}
               sx={{ my: 1, px: '20px', mx: 3, borderRadius: br }}
               onClick={() => handleGroupClick(group)}
             >
               <ListItemIcon sx={{ minWidth: '30px', color: group.color }}>
                 <IconFolder />
-              </ListItemIcon>
-              <ListItemText sx={{ textTransform: 'capitalize' }}>{group.name}</ListItemText>
+              </ListItemIcon >
+              <ListItemText sx={{ textTransform: 'capitalize' }} >{group.name}</ListItemText>
+              <IconEdit />
+              <IconTrash/>
             </ListItemButton>
           ))}
           <Divider sx={{ my: 1 }} />

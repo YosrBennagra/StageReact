@@ -15,8 +15,8 @@ import Fade from '@mui/material/Fade';
 import StudentSearch from 'src/components/apps/TeacherGroupsLayout/StudentSearch';
 
 
-const drawerWidth = 200;
-const secdrawerWidth = 300;
+const drawerWidth = 400;
+const secdrawerWidth = 400;
 
 const COMMON_TAB = [
     { value: '1', icon: <IconBook2 width={20} height={20} />, label: 'Item One', disabled: false },
