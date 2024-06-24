@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { Button, Box, Drawer, useMediaQuery, Tabs, Tab, Avatar, Chip } from '@mui/material';
+import { Button, Box, Drawer, useMediaQuery, Tabs, Tab, Avatar, Chip, Tooltip, Divider } from '@mui/material';
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
 import EmailLists from '../../../components/apps/TeacherGroupsLayout/EmailList';
-import EmailFilter from '../../../components/apps/TeacherGroupsLayout/EmailFilter';
 import EmailSearch from '../../../components/apps/TeacherGroupsLayout/EmailSearch';
 import EmailContent from '../../../components/apps/TeacherGroupsLayout/EmailContent';
 import PageContainer from '../../../components/container/PageContainer';
 import AppCard from 'src/components/shared/AppCard';
 import breadcrumbImg from '../../../assets/images/breadcrumb/emailSv.png';
-import ChildCard from 'src/components/shared/ChildCard';
 import { TabContext, TabPanel } from '@mui/lab';
 import { IconBook2, IconUser } from '@tabler/icons';
+import GroupsLeftLayout from '../../../components/apps/TeacherGroupsLayout/GroupsLeftLayout';
+import { useSelector } from 'react-redux';
+import Fade from '@mui/material/Fade';
+import StudentSearch from 'src/components/apps/TeacherGroupsLayout/StudentSearch';
+
 
 const drawerWidth = 200;
 const secdrawerWidth = 300;
@@ -25,25 +28,23 @@ const DashboardGroup = () => {
     const [isRightSidebarOpen, setRightSidebarOpen] = useState(false);
     const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
-    const [groups, setGroups] = useState([]);
-    const [value, setValue] = React.useState('1');
+    const { members } = useSelector((state) => state.groups);
+    const [value, setValue] = useState('1');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
     return (
-        <PageContainer title="Email App" description="this is email page">
-            <Breadcrumb title="Email app" subtitle="Look at Inbox">
+        <PageContainer title="Groups">
+            <Breadcrumb title="Groups">
                 <Box>
                     <img src={breadcrumbImg} alt={breadcrumbImg} width={'165px'} />
                 </Box>
             </Breadcrumb>
 
             <AppCard>
-                {/* ------------------------------------------- */}
                 {/* Left part */}
-                {/* ------------------------------------------- */}
-
                 <Drawer
                     open={isLeftSidebarOpen}
                     onClose={() => setLeftSidebarOpen(false)}
@@ -54,47 +55,78 @@ const DashboardGroup = () => {
                     }}
                     variant={lgUp ? 'permanent' : 'temporary'}
                 >
-                    <EmailFilter />
+                    <GroupsLeftLayout />
                 </Drawer>
 
-                {/* ------------------------------------------- */}
                 {/* Middle part */}
-                {/* ------------------------------------------- */}
                 <Box
                     sx={{
                         minWidth: secdrawerWidth,
                         width: { xs: '100%', md: secdrawerWidth, lg: secdrawerWidth },
                         flexShrink: 0,
                     }}>
+                    <TabContext value={value}>
+                        <Tabs
+                            variant="fullWidth"
+                            scrollButtons="auto" centered value={value} onChange={handleChange} aria-label="icon tabs example">
+                            {COMMON_TAB.map((tab) => (
+                                <Tab key={tab.value} icon={tab.icon} value={tab.value} />
+                            ))}
+                        </Tabs>
+                        <TabPanel
+                            sx={{
+                                p: 0, m: 0,
+                                backgroundColor: '#2A3447',
+                            }}
+                            key="1"
+                            value="1">
+                            <EmailSearch onClick={() => setLeftSidebarOpen(true)} />
+                            <Divider sx={{ my: 1 }} />
+                            <EmailLists showrightSidebar={() => setRightSidebarOpen(true)} />
+                        </TabPanel>
+                        <TabPanel
+                            key="2"
+                            value="2" sx={{
+                                p: 0,
+                                m: 0,
+                                backgroundColor: '#2A3447',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                            }}>
 
-                        <TabContext value={value}  >
-                            <Tabs
-                                variant="fullWidth"
-                                scrollButtons="auto" centered value={value} onChange={handleChange} aria-label="icon tabs example">
-                                {COMMON_TAB.map((tab, index) => (
-                                    <Tab key={tab.value} icon={tab.icon} value={tab.value} />
-                                ))}
-
-                            </Tabs>
-                            <TabPanel
-                                sx={{
-                                    p: 0, m: 0,
-                                    backgroundColor: '#2A3447',
-                                }}
-                                key="1" value="1" >
-                                <EmailSearch onClick={() => setLeftSidebarOpen(true)} />
-                                <EmailLists showrightSidebar={() => setRightSidebarOpen(true)} />
-                            </TabPanel>
-                            <TabPanel key="2" value="2" >
-                                <Chip avatar={<Avatar alt="Natacha" />} label="Cristiano" color="primary" />
-                            </TabPanel>
-                        </TabContext>
+                            <StudentSearch onClick={() => setLeftSidebarOpen(true)} />
+                            <Divider sx={{ my: 1 }} />
+                            {members && members.users ? (
+                                members.users.map((user) => (
+                                    <>
+                                        <Tooltip
+                                            TransitionComponent={Fade}
+                                            TransitionProps={{ timeout: 600 }}
+                                            title={
+                                                <div>
+                                                    <div>Email: {user.email}</div>
+                                                    <div>Username: {user.username}</div>
+                                                </div>}>
+                                            <Chip sx={{
+                                                m: 1,
+                                                textTransform: 'capitalize'
+                                            }}
+                                                key={user._id}
+                                                avatar={<Avatar alt={user.email} />}
+                                                label={`${user.firstname} ${user.lastname}`}
+                                                color="primary" />
+                                        </Tooltip>
+                                        <Divider sx={{ my: 1 }} />
+                                    </>
+                                ))
+                            ) : (
+                                <p></p>
+                            )}
+                        </TabPanel>
+                    </TabContext>
                 </Box>
 
-                {/* ------------------------------------------- */}
                 {/* Right part */}
-                {/* ------------------------------------------- */}
-
                 {mdUp ? (
                     <Drawer
                         anchor="right"

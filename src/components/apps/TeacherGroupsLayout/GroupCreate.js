@@ -14,8 +14,10 @@ import CustomFormLabel from 'src/components/forms/theme-elements/CustomFormLabel
 
 const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-const EmailCompose = () => {
+const GroupCreate = ({ onAddGroup }) => {
   const [open, setOpen] = useState(false);
+  const [groupName, setGroupName] = useState('');
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -24,19 +26,44 @@ const EmailCompose = () => {
     setOpen(false);
   };
 
+  const handleAddGroup = async () => {
+    const newGroup = {
+      name: groupName,
+    };
+
+    try {
+      const response = await fetch('http://localhost:3001/groups', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newGroup),
+      });
+
+      if (response.ok) {
+        const createdGroup = await response.json();
+        onAddGroup(createdGroup);
+        console.log('Successfully added the group');
+        handleClose();
+      } else {
+        console.error('Failed to add the group');
+      }
+    } catch (error) {
+      console.error('Error adding group:', error);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    setGroupName(event.target.value);
+  };
+
   return (
     <Box>
-      {/* ------------------------------------------- */}
-      {/* Compose Email */}
-      {/* ------------------------------------------- */}
       <Box p={3} pb={1}>
         <Button variant="contained" fullWidth color="primary" onClick={handleClickOpen}>
-          Compose
+          Create Group
         </Button>
       </Box>
-      {/* ------------------------------------------- */}
-      {/* Dialog for compose */}
-      {/* ------------------------------------------- */}
       <Dialog
         open={open}
         TransitionComponent={Transition}
@@ -46,38 +73,24 @@ const EmailCompose = () => {
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle id="alert-dialog-slide-title" variant="h5">
-          Compose Mail
-        </DialogTitle>
+        <DialogTitle id="alert-dialog-slide-title">Create New Group</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description" component="div">
-            <CustomFormLabel htmlFor="to-text">To</CustomFormLabel>
-            <TextField id="to-text" fullWidth size="small" variant="outlined" />
-            <CustomFormLabel htmlFor="subject-text">Subject</CustomFormLabel>
-            <TextField id="subject-text" fullWidth size="small" variant="outlined" />
-            <CustomFormLabel htmlFor="message-text">Message</CustomFormLabel>
+            <CustomFormLabel htmlFor="group-name">Group Name</CustomFormLabel>
             <TextField
-              id="message-text"
-              placeholder="Write a message"
-              multiline
-              fullWidth
-              rows={4}
-              variant="outlined"
-            />
-            <CustomFormLabel htmlFor="upload-text">Attachment</CustomFormLabel>
-            <TextField
-              type="file"
-              autoFocus
-              id="upload-text"
+              id="group-name"
               fullWidth
               size="small"
               variant="outlined"
+              value={groupName}
+              onChange={handleInputChange}
+              helperText="Enter group name in the input above"
             />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary" variant="contained">
-            Send
+          <Button onClick={handleAddGroup} color="primary" variant="contained">
+            Create
           </Button>
           <Button onClick={handleClose} color="secondary">
             Cancel
@@ -88,4 +101,4 @@ const EmailCompose = () => {
   );
 };
 
-export default EmailCompose;
+export default GroupCreate;

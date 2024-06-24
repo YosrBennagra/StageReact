@@ -7,6 +7,9 @@ import TicketReducer from './apps/tickets/TicketSlice';
 import ContactsReducer from './apps/contacts/ContactSlice';
 import EcommerceReducer from './apps/eCommerce/EcommerceSlice';
 import UserProfileReducer from './apps/userProfile/UserProfileSlice';
+import groupsReducer from './apps/groups/groupsSlice';
+import usersReducer from './apps/users/usersSlice';
+
 import BlogReducer from './apps/blog/BlogSlice';
 
 export const store = configureStore({
@@ -20,6 +23,8 @@ export const store = configureStore({
     ecommerceReducer: EcommerceReducer,
     userpostsReducer: UserProfileReducer,
     blogReducer: BlogReducer,
+    groups: groupsReducer,
+    users:usersReducer,
   },
 });
 
