@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   Box,
   Typography,
+  IconButton,
 } from '@mui/material';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import {
@@ -19,6 +20,8 @@ import {
 import GroupCreate from './GroupCreate';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { fetchGroupMembers, fetchGroups, selectGroup } from 'src/store/apps/groups/groupsSlice';
+import axios from 'axios';
+import GroupEdit from './GroupEdit';
 
 const GroupsLeftLayout = () => {
   const customizer = useSelector((state) => state.customizer);
@@ -27,9 +30,9 @@ const GroupsLeftLayout = () => {
   const [groups, setGroups] = useState([]);
   const allGroups = useSelector((state) => state.groups.groups);
   const active = useSelector((state) => state.groups.selectedGroup);
-  console.log("active", active)
+
   const user = useAuthUser()
-  console.log("auth", user)
+
   useEffect(() => {
     dispatch(fetchGroups());
   }, [dispatch]);
@@ -46,6 +49,24 @@ const GroupsLeftLayout = () => {
   const handleAddGroup = (newGroup) => {
     setGroups((prevGroups) => [...prevGroups, newGroup]);
   };
+  const handleUpdateGroup = (updatedGroup) => {
+    setGroups((prevGroups) =>
+      prevGroups.map((group) => (group._id === updatedGroup._id ? updatedGroup : group))
+    );
+  };
+
+  const handleDeleteGroup = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/groups/${id}`);
+      setGroups((prevGroups) =>
+        prevGroups.filter((group) => group._id !== id)
+      );
+    } catch (error) {
+      console.error('Error deleting group:', error);
+    }
+  };
+
+
 
   return (
     <>
@@ -76,8 +97,11 @@ const GroupsLeftLayout = () => {
                 <IconFolder />
               </ListItemIcon >
               <ListItemText sx={{ textTransform: 'capitalize' }} >{group.name}</ListItemText>
-              <IconEdit />
-              <IconTrash/>
+              <GroupEdit group={group} onUpdateGroup={handleUpdateGroup} />
+              <Box sx={{ width: '1px', height: '24px', backgroundColor: 'grey', mx: 1 }} />
+              <IconButton onClick={() => handleDeleteGroup(group._id)}>
+                <IconTrash />
+              </IconButton>
             </ListItemButton>
           ))}
           <Divider sx={{ my: 1 }} />

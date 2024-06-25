@@ -12,7 +12,7 @@ const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={r
 const StudentSearch = ({ onClick }) => {
   const searchTerm = useSelector((state) => state.emailReducer.emailSearch);
   const dispatch = useDispatch();
-
+  const [studentId, setStudentId] = useState('');
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -21,6 +21,14 @@ const StudentSearch = ({ onClick }) => {
   const handleClose = () => {
     setOpen(false);
   };
+
+
+
+
+  const handleInputChange = (event) => {
+    setStudentId(event.target.value);
+  };
+
   return (
     <>    <Box display="flex" sx={{ p: 2 }}>
       {/* ------------------------------------------- */}
@@ -46,7 +54,7 @@ const StudentSearch = ({ onClick }) => {
                 <IconButton >
                   <IconSearch size={'16'} />
                 </IconButton>
-                <Box sx={{ width: '1px', height: '24px', backgroundColor: 'grey' }} />
+                <Box sx={{ width: '1px', height: '24px', backgroundColor: 'grey', mx: 1 }} />
                 <IconButton onClick={handleClickOpen} color='primary'>
                   <IconPlus size={'16'} />
                 </IconButton>
@@ -78,14 +86,14 @@ const StudentSearch = ({ onClick }) => {
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description" component="div">
               <CustomFormLabel htmlFor="group-name">Insert Student Name</CustomFormLabel>
-              <AutoCompleteStudents/>
+              <AutoCompleteStudents onInputChange={handleInputChange} />
             </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="secondary">
               Cancel
             </Button>
-            <Button  color="primary" variant="contained">
+            <Button color="primary" variant="contained">
               Create
             </Button>
           </DialogActions>

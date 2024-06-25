@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Box, Drawer, useMediaQuery, Tabs, Tab, Avatar, Chip, Tooltip, Divider } from '@mui/material';
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
 import EmailLists from '../../../components/apps/TeacherGroupsLayout/EmailList';
@@ -13,7 +13,8 @@ import GroupsLeftLayout from '../../../components/apps/TeacherGroupsLayout/Group
 import { useSelector } from 'react-redux';
 import Fade from '@mui/material/Fade';
 import StudentSearch from 'src/components/apps/TeacherGroupsLayout/StudentSearch';
-
+import axios from 'axios';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const drawerWidth = 400;
 const secdrawerWidth = 400;
@@ -28,11 +29,32 @@ const DashboardGroup = () => {
     const [isRightSidebarOpen, setRightSidebarOpen] = useState(false);
     const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
-    const { members } = useSelector((state) => state.groups);
+    const { members: globalMembers } = useSelector((state) => state.groups);
+    const [groupMembers, setGroupMembers] = useState([]);
     const [value, setValue] = useState('1');
+    const currentSelectedGroup = useSelector((state) => state.groups.selectedGroup);
+    const currentLoggedInUser = useAuthUser();
+
+    useEffect(() => {
+        if (globalMembers && Array.isArray(globalMembers.users)) {
+            setGroupMembers(globalMembers.users);
+        } else {
+            setGroupMembers([]);
+        }
+    }, [globalMembers]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    };
+
+    const handleDeleteUserFromGroup = async (id) => {
+        console.log('User To Delete: ', id, currentSelectedGroup);
+        try {
+            await axios.put(`http://localhost:3001/groups/${currentSelectedGroup}/removeUser/${id}`);
+            setGroupMembers((prevMembers) => Array.isArray(prevMembers) ? prevMembers.filter((user) => user._id !== id) : []);
+        } catch (error) {
+            console.error('Error removing user:', error);
+        }
     };
 
     return (
@@ -68,56 +90,67 @@ const DashboardGroup = () => {
                     <TabContext value={value}>
                         <Tabs
                             variant="fullWidth"
-                            scrollButtons="auto" centered value={value} onChange={handleChange} aria-label="icon tabs example">
+                            scrollButtons="auto"
+                            centered
+                            value={value}
+                            onChange={handleChange}
+                            aria-label="icon tabs example"
+                        >
                             {COMMON_TAB.map((tab) => (
                                 <Tab key={tab.value} icon={tab.icon} value={tab.value} />
                             ))}
                         </Tabs>
                         <TabPanel
                             sx={{
-                                p: 0, m: 0,
+                                p: 0,
+                                m: 0,
                                 backgroundColor: '#2A3447',
                             }}
                             key="1"
-                            value="1">
+                            value="1"
+                        >
                             <EmailSearch onClick={() => setLeftSidebarOpen(true)} />
                             <Divider sx={{ my: 1 }} />
                             <EmailLists showrightSidebar={() => setRightSidebarOpen(true)} />
                         </TabPanel>
                         <TabPanel
                             key="2"
-                            value="2" sx={{
+                            value="2"
+                            sx={{
                                 p: 0,
                                 m: 0,
                                 backgroundColor: '#2A3447',
                                 flexDirection: 'column',
                                 alignItems: 'center',
-                            }}>
-
+                            }}
+                        >
                             <StudentSearch onClick={() => setLeftSidebarOpen(true)} />
                             <Divider sx={{ my: 1 }} />
-                            {members && members.users ? (
-                                members.users.map((user) => (
-                                    <>
-                                        <Tooltip
-                                            TransitionComponent={Fade}
-                                            TransitionProps={{ timeout: 600 }}
-                                            title={
-                                                <div>
-                                                    <div>Email: {user.email}</div>
-                                                    <div>Username: {user.username}</div>
-                                                </div>}>
-                                            <Chip sx={{
+                            {groupMembers.length > 0 ? (
+                                groupMembers.map((user) => (
+                                    <Tooltip
+                                        TransitionComponent={Fade}
+                                        TransitionProps={{ timeout: 600 }}
+                                        title={
+                                            <div>
+                                                <div>Email: {user.email}</div>
+                                                <div>Username: {user.username}</div>
+                                            </div>
+                                        }
+                                        key={user._id}
+                                    >
+                                        <Chip
+                                            sx={{
                                                 m: 1,
                                                 textTransform: 'capitalize'
                                             }}
-                                                key={user._id}
-                                                avatar={<Avatar alt={user.email} />}
-                                                label={`${user.firstname} ${user.lastname}`}
-                                                color="primary" />
-                                        </Tooltip>
-                                        <Divider sx={{ my: 1 }} />
-                                    </>
+                                            key={user._id}
+                                            avatar={<Avatar alt={user.email} />}
+                                            label={`${user.firstname} ${user.lastname}`}
+                                            color={user._id === currentLoggedInUser.userId ? 'success' : 'primary'}
+                                            onDelete={() => handleDeleteUserFromGroup(user._id)}
+                                        />
+                                    </Tooltip>
                                 ))
                             ) : (
                                 <p></p>
