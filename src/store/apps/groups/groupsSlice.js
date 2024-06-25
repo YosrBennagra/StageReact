@@ -34,23 +34,19 @@ const groupsSlice = createSlice({
       .addCase(fetchGroups.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.groups = action.payload;
-        console.log("Members added to state: ", action.payload);
       })
       .addCase(fetchGroups.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })
       .addCase(fetchGroupMembers.pending, (state) => {
-
         state.status = 'loading';
       })
       .addCase(fetchGroupMembers.fulfilled, (state, action) => {
-        console.log("Members added to state: ", action.payload);
         state.status = 'succeeded';
-        state.members = action.payload;
+        state.members = action.payload.users; 
       })
       .addCase(fetchGroupMembers.rejected, (state, action) => {
-        console.log("Members added to state: ", action.payload);
         state.status = 'failed';
         state.error = action.error.message;
       });

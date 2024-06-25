@@ -10,11 +10,12 @@ import breadcrumbImg from '../../../assets/images/breadcrumb/emailSv.png';
 import { TabContext, TabPanel } from '@mui/lab';
 import { IconBook2, IconUser } from '@tabler/icons';
 import GroupsLeftLayout from '../../../components/apps/TeacherGroupsLayout/GroupsLeftLayout';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Fade from '@mui/material/Fade';
 import StudentSearch from 'src/components/apps/TeacherGroupsLayout/StudentSearch';
 import axios from 'axios';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import { fetchGroupMembers } from '../../../store/apps/groups/groupsSlice';
 
 const drawerWidth = 400;
 const secdrawerWidth = 400;
@@ -29,6 +30,7 @@ const DashboardGroup = () => {
     const [isRightSidebarOpen, setRightSidebarOpen] = useState(false);
     const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
+    const dispatch = useDispatch();
     const { members: globalMembers } = useSelector((state) => state.groups);
     const [groupMembers, setGroupMembers] = useState([]);
     const [value, setValue] = useState('1');
@@ -36,8 +38,14 @@ const DashboardGroup = () => {
     const currentLoggedInUser = useAuthUser();
 
     useEffect(() => {
-        if (globalMembers && Array.isArray(globalMembers.users)) {
-            setGroupMembers(globalMembers.users);
+        if (currentSelectedGroup) {
+            dispatch(fetchGroupMembers(currentSelectedGroup));
+        }
+    }, [currentSelectedGroup, dispatch]);
+
+    useEffect(() => {
+        if (globalMembers && Array.isArray(globalMembers)) {
+            setGroupMembers(globalMembers);
         } else {
             setGroupMembers([]);
         }
