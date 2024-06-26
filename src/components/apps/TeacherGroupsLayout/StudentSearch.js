@@ -88,7 +88,7 @@ const StudentSearch = ({ onClick }) => {
                     fullWidth
                     size="small"
                     value={searchTerm}
-                    placeholder="Search Student | Add"
+                    placeholder="Search User | Add"
                     variant="outlined"
                     onChange={(e) => dispatch(SearchEmail(e.target.value))}
                 />

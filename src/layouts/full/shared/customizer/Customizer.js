@@ -46,32 +46,53 @@ import CustomTextField from 'src/components/forms/theme-elements/CustomTextField
 
 import axios from 'axios';
 
-
-
 const SidebarWidth = '320px';
-/* Assignemnt Form */
-/* Assignemnt Form */
-const Customizer = () => {
-  const navigate = useNavigate();
-  /* Assignemnt Form */
-  const [formData, setFormData] = React.useState({ title: '' });
 
+const Customizer = () => {
+  /* Institution B */
+  const [formDataIns, setFormDataIns] = React.useState({ name: '' });
+  const [openins, setOpenIns] = React.useState(false);
+  const onSubmitIns = async (event) => {
+    event.preventDefault();
+    console.log(formDataIns);
+    try {
+      const response = await axios.post(`http://localhost:3001/institutions`, formDataIns);
+      console.log(response);
+      window.location.reload();
+    } catch (error) {
+      console.error('Creation error:', error.response.data.message);
+    }
+  }
+  const handleClickOpenInstitution = () => {
+    setOpenIns(true);
+  };
+  const handleCloseIns = () => {
+    setOpenIns(false);
+  };
+   /* Institution E */
+
+  /* Assignment B*/
+  const [formData, setFormData] = React.useState({ title: '' });
   const onSubmit = async (event) => {
     event.preventDefault();
     console.log(formData);
     try {
       const response = await axios.post(`http://localhost:3001/assignments`, formData);
       console.log(response);
-      
-      // Refresh the page
       window.location.reload();
-  
     } catch (error) {
       console.error('Creation error:', error.response.data.message);
     }
   }
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   
-  
+  /* Assignment E*/
 
   /* Assignemnt Form */
   const [showDrawer, setShowDrawer] = useState(false);
@@ -125,12 +146,6 @@ const Customizer = () => {
       disp: 'ORANGE_THEME',
     },
   ];
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
   return (
     <div>
       {/* ------------------------------------------- */}
@@ -159,7 +174,7 @@ const Customizer = () => {
           </Fab>
         </Tooltip>)
       }
-      {/* Dialog */}
+      {/* Dialog Assignments B*/}
       <>
         <form >
           <Dialog open={open} onClose={handleClose}>
@@ -196,7 +211,57 @@ const Customizer = () => {
           </Dialog>
         </form>
       </>
-      {/* Dialog */}
+      {/* Dialog Assignments E */}
+      {/* ------------------------------------------- */}
+      {
+        location.pathname === '/dashboard/institutions' && (<Tooltip title="Add an institution">
+          <Fab
+            color="secondary"
+            aria-label="plus"
+            onClick={handleClickOpenInstitution}
+            sx={{ position: 'fixed', right: '100px', bottom: '15px' }}>
+            <IconPlus width={20} />
+          </Fab>
+        </Tooltip>)
+      }
+      {/* Dialog Institutions B*/}
+      <>
+        <form >
+          <Dialog open={openins} onClose={handleCloseIns}>
+            <DialogTitle>Creating A New Institutions</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please insert below the Institutions name.
+              </DialogContentText>
+              <Box mt={2}>
+                <CustomTextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Institution name"
+                  type="text"
+                  fullWidth
+                  onChange={(e) => setFormDataIns({ ...formDataIns, title: e.target.value })}
+                  required
+                  sx={{
+                    '& input:valid + fieldset': {
+                      borderColor: '#39cb7f',
+                    },
+                    '& input:invalid + fieldset': {
+                      borderColor: '#fc4b6c',
+                    },
+                  }}
+                />
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button color="error" onClick={handleCloseIns}>Cancel</Button>
+              <Button color="success" onClick={onSubmitIns}>Create</Button>
+            </DialogActions>
+          </Dialog>
+        </form>
+      </>
+      {/* Dialog Institutions E */}
       <Drawer
         anchor="right"
         open={showDrawer}

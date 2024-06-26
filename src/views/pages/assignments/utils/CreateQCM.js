@@ -16,7 +16,6 @@ export default function CreateQCM({ question, questionId, onDelete, onSave , ass
     const initialContent = question && question.content ? question.content : '';
     const initialScore = question && question.score ? question.score : 0;
     const [answers, setAnswers] = useState(initialAnswers);
-    
     const [questionContent, setQuestionContent] = useState(initialContent);
     const [questionScore, setQuestionScore] = useState(initialScore);
     const [isConfirmed, setIsConfirmed] = useState(true);

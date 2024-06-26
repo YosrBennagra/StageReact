@@ -37,12 +37,16 @@ export default function CreateQCU({ question, questionId, onDelete, onSave, assi
         ]);
     };
 
+    const handleDeleteAnswer = (id) => {
+        setAnswers((prevAnswers) => prevAnswers.filter((answer) => answer.id !== id));
+    };
+
     const handleConfirm = async () => {
         const correctAnswer = answers.find((answer) => answer.correct);
         const options = answers.map((answer) => answer.text);
 
         const newQuestion = {
-            assignementId: assignment, 
+            assignementId: assignment,
             content: questionContent,
             options,
             correctAnswer: correctAnswer ? correctAnswer.text : '',
@@ -50,8 +54,8 @@ export default function CreateQCU({ question, questionId, onDelete, onSave, assi
             type: 'QCU',
         };
 
-        const response = await fetch('http://localhost:3001/questions', {
-            method: 'POST',
+        const response = await fetch(`http://localhost:3001/questions/${questionId}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -155,6 +159,9 @@ export default function CreateQCU({ question, questionId, onDelete, onSave, assi
                             }
                             endAdornment={
                                 <InputAdornment position="end">
+                                    <IconButton onClick={() => handleDeleteAnswer(answer.id)} disabled={!isEditable}>
+                                        <IconTrash color="#b52222" />
+                                    </IconButton>
                                     <IconButton
                                         aria-label="toggle answer visibility"
                                         onClick={() => handleClickCorrect(answer.id)}

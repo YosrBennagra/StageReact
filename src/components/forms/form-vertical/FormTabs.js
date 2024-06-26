@@ -127,7 +127,7 @@ const FormTabs = () => {
                   </Grid>
                   {/* 4 */}
                   <Grid item xs={12}>
-                    <CustomFormLabel htmlFor="ft-date">Birth Date</CustomFormLabel>
+                    <CustomFormLabel htmlFor="ft-date">Birth Datea</CustomFormLabel>
                   </Grid>
                   <Grid item xs={12}>
                     <CustomTextField type="date" id="ft-date" placeholder="John Deo" fullWidth />

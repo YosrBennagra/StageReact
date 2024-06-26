@@ -15,7 +15,7 @@ export default function CreateTextQuestion({ question, questionId, onDelete, onS
     const [isConfirmed, setIsConfirmed] = useState(true);
     const [isEditable, setIsEditable] = useState(!question || !question.id);
 
-    const handleConfirm = async () => {
+    const handleConfirm = async () => { 
         const newQuestion = {
             assignementId: assignment,  
             content: questionContent,
@@ -23,8 +23,8 @@ export default function CreateTextQuestion({ question, questionId, onDelete, onS
             score: questionScore,
         };
 
-        const response = await fetch('http://localhost:3001/questions', {
-            method: 'POST',
+        const response = await fetch(`http://localhost:3001/questions/${questionId}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

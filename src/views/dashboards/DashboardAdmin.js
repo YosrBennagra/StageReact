@@ -12,9 +12,9 @@ import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const topcards = [
   {
-    href: '/apps/blog/posts',
+    href: '/dashboard/institutions',
     icon: icon3,
-    title: 'High Schools',
+    title: 'Institutions',
     digits: '256',
     bgcolor: 'warning',
     roles: ['admin']

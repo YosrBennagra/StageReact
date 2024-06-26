@@ -16,6 +16,7 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  Card,
 } from '@mui/material';
 import axios from 'axios';
 import { IconEdit, IconSearch, IconTrash } from '@tabler/icons';
@@ -69,12 +70,15 @@ export default function DashboardAssignments() {
       console.error('Error deleting assignment:', error);
     }
   };
-  
+
   return (
     <PageContainer title="Assignments" description="This is the Assignments page">
       {/* breadcrumb */}
       <Breadcrumb title="Assignments" items={BCrumb} />
       {/* end breadcrumb */}
+      {/* Options B */}
+
+      {/* Options E */}
       <TextField
         id="outlined-search"
         placeholder="Search Assignments"
@@ -106,9 +110,7 @@ export default function DashboardAssignments() {
                   <TableCell>
                     <Typography variant="h6">Assignment Title</Typography>
                   </TableCell>
-                  <TableCell>
-                    <Typography variant="h6">Description</Typography>
-                  </TableCell>
+
                   <TableCell>
                     <Typography variant="h6">Status</Typography>
                   </TableCell>
@@ -131,11 +133,7 @@ export default function DashboardAssignments() {
                         {assignment.title}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Typography color="textSecondary" variant="h6" fontWeight="400">
-                        {assignment.description}
-                      </Typography>
-                    </TableCell>
+
                     <TableCell>
                       <Chip
                         sx={{

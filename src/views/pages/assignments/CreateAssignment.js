@@ -4,7 +4,19 @@ import CreateQCM from './utils/CreateQCM';
 import CreateQCU from './utils/CreateQCU';
 import CreateTextQuestion from './utils/CreateTextQuestion';
 import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
-import { Box, Button, Tooltip, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, Tooltip, MenuItem, Select, FormControl, InputLabel, Card, Accordion, AccordionSummary, Typography, Stack, Chip, AccordionDetails, Grid, TextField } from '@mui/material';
+import ParentCard from 'src/components/shared/ParentCard';
+import ChildCard from 'src/components/shared/ChildCard';
+import { IconChevronDown, IconClock, IconClockOff, IconNote } from '@tabler/icons';
+import CustomFormLabel from 'src/components/forms/theme-elements/CustomFormLabel';
+import { DatePicker, DateTimePicker, LocalizationProvider, StaticDatePicker, StaticTimePicker, TimePicker } from '@mui/x-date-pickers';
+
+import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePickerToolbar } from '@mui/x-date-pickers/DatePicker/DatePickerToolbar';
+import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
+
+
 
 export default function CreateAssignment() {
     const [questions, setQuestions] = useState([]);
@@ -31,7 +43,7 @@ export default function CreateAssignment() {
                 const response = await fetch(`http://localhost:3001/questions/assignment/${id}`);
                 if (response.ok) {
                     const fetchedQuestions = await response.json();
-                    console.log('Fetched Questions:', fetchedQuestions); 
+                    console.log('Fetched Questions:', fetchedQuestions);
                     setQuestions(fetchedQuestions.map((q) => ({
                         id: q._id,
                         type: q.type,
@@ -109,10 +121,74 @@ export default function CreateAssignment() {
             )
         );
     };
-
+    /* Date and Time B */
+    const [value, setValue] = React.useState(null);
+    const [value2, setValue2] = React.useState(null);
+    /* Date and Time  E*/
     return (
         <>
             <Breadcrumb title="Creating An Assignment" items={BCrumb} />
+            <Box sx={{ my: 3 }}>
+                <Accordion
+                    sx={{
+                        backgroundColor: "#30219c26",
+                    }}>
+                    <AccordionSummary
+
+                        expandIcon={<IconChevronDown />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography variant="h6">Click here to edit the assignment options</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} lg={4}>
+                                Additional Settings
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                Start
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                End
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                <CustomSwitch />
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                <CustomFormLabel htmlFor="date">Date</CustomFormLabel>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <StaticDatePicker orientation="landscape" />
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                <CustomFormLabel htmlFor="date">Date</CustomFormLabel>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <StaticDatePicker orientation="landscape" />
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                <CustomSwitch />
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                <CustomFormLabel htmlFor="time">Time</CustomFormLabel>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <StaticTimePicker orientation="landscape" />
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item xs={12} lg={4}>
+                                <CustomFormLabel htmlFor="time">Time</CustomFormLabel>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <StaticTimePicker orientation="landscape" />
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item xs={12} lg={12}>
+                                descsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+                            </Grid>
+                        </Grid>
+                    </AccordionDetails>
+                </Accordion>
+            </Box>
             {questions.map((question) => {
                 console.log(`Rendering ${question.type} question with id ${question.id}`);
                 return (
