@@ -7,7 +7,7 @@ import { useParams } from 'react-router';
 import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
 import { Accordion, AccordionSummary, Box, Button, Card, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, Stack, Tooltip, Typography } from '@mui/material';
 import ChildCard from 'src/components/shared/ChildCard';
-import { IconBriefcase, IconChevronDown, IconClock, IconClock2, IconClockOff, IconNote, IconSchool } from '@tabler/icons';
+import { IconBriefcase, IconChevronDown, IconClock, IconClock2, IconClockOff, IconInfoCircle, IconNote, IconSchool } from '@tabler/icons';
 
 export default function StudentAssignment() {
     const [questions, setQuestions] = useState([]);
@@ -52,9 +52,8 @@ export default function StudentAssignment() {
     /* Confirm Dialog E */
     return (
         <>
-
             <Box sx={{ my: 3 }}>
-                <Accordion
+                <Accordion 
                     sx={{
                         backgroundColor: "#d9080826",
                     }}>
@@ -64,7 +63,7 @@ export default function StudentAssignment() {
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                     >
-                        <Typography variant="h6">Click here to read the assignment description</Typography>
+                        <Typography variant="h6">Click here to read the assignment description ...</Typography> <IconInfoCircle size="21"></IconInfoCircle>
                     </AccordionSummary>
                     <ChildCard
                         bgcolor='#d9080826'

@@ -93,7 +93,11 @@ const Profile = () => {
                       <Box
                         width="45px"
                         height="45px"
-                        bgcolor="primary.light"
+                        bgcolor={
+                          profile.href == "/student/dashboard/assignments"
+                            ? "error.light"
+                            : "primary.light"
+                        }
                         display="flex"
                         alignItems="center"
                         justifyContent="center"

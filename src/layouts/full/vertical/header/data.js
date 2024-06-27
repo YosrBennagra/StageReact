@@ -6,6 +6,7 @@ import img4 from 'src/assets/images/profile/user-4.jpg';
 import icon1 from 'src/assets/images/svgs/icon-account.svg';
 import icon2 from 'src/assets/images/svgs/icon-inbox.svg';
 import icon3 from 'src/assets/images/svgs/icon-tasks.svg';
+import icon5 from 'src/assets/images/svgs/icon-favorites.svg';
 
 import ddIcon1 from 'src/assets/images/svgs/icon-dd-chat.svg';
 import ddIcon2 from 'src/assets/images/svgs/icon-dd-cart.svg';
@@ -73,10 +74,10 @@ const profile = [
     icon: icon1,
   },
   {
-    href: '/assignments',
+    href: '/student/dashboard/assignments',
     title: 'My Assignments',
     subtitle: 'Quiz & tests',
-    icon: icon2,
+    icon: icon5,
   },
   {
     href: '/apps/notes',

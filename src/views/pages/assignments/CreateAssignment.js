@@ -121,6 +121,9 @@ export default function CreateAssignment() {
             )
         );
     };
+    /* Instant score B */
+    const [instantScore, setInstantScore] = useState(false);
+    /* Instant score E */
     /* Date and Time B */
     const [value, setValue] = React.useState(null);
     const [value2, setValue2] = React.useState(null);
@@ -134,7 +137,6 @@ export default function CreateAssignment() {
                         backgroundColor: "#30219c26",
                     }}>
                     <AccordionSummary
-
                         expandIcon={<IconChevronDown />}
                         aria-controls="panel1a-content"
                         id="panel1a-header"
@@ -143,47 +145,134 @@ export default function CreateAssignment() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Grid container spacing={3}>
-                            <Grid item xs={12} lg={4}>
-                                Additional Settings
+                            <Grid item container spacing={3}>
+                                <Grid item xs={12} lg={4}>
+                                    Additional Settings
+                                </Grid>
+                                <Grid item xs={12} lg={4}>
+                                    Start
+                                </Grid>
+                                <Grid item xs={12} lg={4}>
+                                    End
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} lg={4}>
-                                Start
+                            <Grid item container spacing={3}>
+                                <Grid item xs={12} lg={4}>
+                                    Instant Results<CustomSwitch onClick={() => setInstantScore(!instantScore)} />Scheduled Results
+                                    {
+                                        instantScore
+                                            ? <>
+                                                <Accordion>
+                                                    <AccordionSummary
+                                                        expandIcon={<IconChevronDown />}
+                                                        aria-controls="panel1a-content"
+                                                        id="panel1a-header"
+                                                    >
+                                                        <CustomFormLabel htmlFor="date">Click to pick the date</CustomFormLabel>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                            <StaticDatePicker orientation="landscape" />
+                                                        </LocalizationProvider>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                                <Accordion>
+                                                    <AccordionSummary
+                                                        expandIcon={<IconChevronDown />}
+                                                        aria-controls="panel1a-content"
+                                                        id="panel1a-header">
+                                                        <CustomFormLabel htmlFor="time">Click to pick the time</CustomFormLabel>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                            <StaticTimePicker orientation="landscape" />
+                                                        </LocalizationProvider>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            </>
+                                            : <p></p>
+                                    }
+                                </Grid>
+                                <Grid item xs={12} lg={4}>
+                                    <Accordion>
+                                        <AccordionSummary
+                                            expandIcon={<IconChevronDown />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header"
+                                        >
+                                            <CustomFormLabel htmlFor="date">Click to pick the date</CustomFormLabel>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <StaticDatePicker orientation="landscape" />
+                                            </LocalizationProvider>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Grid>
+                                <Grid item xs={12} lg={4}>
+                                    <Accordion>
+                                        <AccordionSummary
+                                            expandIcon={<IconChevronDown />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header"
+                                        >
+                                            <CustomFormLabel htmlFor="date">Click to pick the date</CustomFormLabel>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <StaticDatePicker orientation="landscape" />
+                                            </LocalizationProvider>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} lg={4}>
-                                End
+                            <Grid item container spacing={3}>
+                                <Grid item xs={12} lg={4}>
+                                    Visible<CustomSwitch />Hidden
+                                </Grid>
+                                <Grid item xs={12} lg={4}>
+                                    <Accordion>
+                                        <AccordionSummary
+                                            expandIcon={<IconChevronDown />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header">
+                                            <CustomFormLabel htmlFor="time">Click to pick the time</CustomFormLabel>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <StaticTimePicker orientation="landscape" />
+                                            </LocalizationProvider>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Grid>
+                                <Grid item xs={12} lg={4}>
+                                    <Accordion>
+                                        <AccordionSummary
+                                            expandIcon={<IconChevronDown />}
+                                            aria-controls="panel1a-content"
+                                            id="panel1a-header">
+                                            <CustomFormLabel htmlFor="time">Click to pick the time</CustomFormLabel>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <StaticTimePicker orientation="landscape" />
+                                            </LocalizationProvider>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} lg={4}>
-                                <CustomSwitch />
-                            </Grid>
-                            <Grid item xs={12} lg={4}>
-                                <CustomFormLabel htmlFor="date">Date</CustomFormLabel>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <StaticDatePicker orientation="landscape" />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid item xs={12} lg={4}>
-                                <CustomFormLabel htmlFor="date">Date</CustomFormLabel>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <StaticDatePicker orientation="landscape" />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid item xs={12} lg={4}>
-                                <CustomSwitch />
-                            </Grid>
-                            <Grid item xs={12} lg={4}>
-                                <CustomFormLabel htmlFor="time">Time</CustomFormLabel>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <StaticTimePicker orientation="landscape" />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid item xs={12} lg={4}>
-                                <CustomFormLabel htmlFor="time">Time</CustomFormLabel>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <StaticTimePicker orientation="landscape" />
-                                </LocalizationProvider>
-                            </Grid>
+
                             <Grid item xs={12} lg={12}>
-                                descsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+                                <CustomFormLabel sx={{ mt: 0 }} >
+                                    Description:
+                                </CustomFormLabel>
+                                <CustomTextField
+                                    helperText="You can provide a description here"
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                />
                             </Grid>
                         </Grid>
                     </AccordionDetails>
