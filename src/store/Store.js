@@ -9,7 +9,7 @@ import EcommerceReducer from './apps/eCommerce/EcommerceSlice';
 import UserProfileReducer from './apps/userProfile/UserProfileSlice';
 import groupsReducer from './apps/groups/groupsSlice';
 import usersReducer from './apps/users/usersSlice';
-
+import assignmentsSliceReducer from './apps/assignments/assignmentsSlice';
 import BlogReducer from './apps/blog/BlogSlice';
 
 export const store = configureStore({
@@ -25,6 +25,7 @@ export const store = configureStore({
     blogReducer: BlogReducer,
     groups: groupsReducer,
     users:usersReducer,
+    assignmentsReducer: assignmentsSliceReducer
   },
 });
 
