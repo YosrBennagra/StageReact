@@ -124,6 +124,9 @@ const DashboardGroup = Loadable(lazy(() => import('../views/dashboards/groups/Da
 const DashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/DashboardAssignments')));
 const StudentDashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/StudentDashboardAssignments')));
 const DashboardInstitutions = Loadable(lazy(() => import('../views/dashboards/institutions/DashboardInstitutions')));
+
+const MyInstitution = Loadable(lazy(() => import('../views/dashboards/institutions/MyInstitution')));
+
 // assignments
 const CreateAssignment = Loadable(lazy(() => import('../views/pages/assignments/CreateAssignment')));
 const StudentAssignment = Loadable(lazy(() => import('../views/MyAssignments/StudentAssignment')));
@@ -142,6 +145,7 @@ const Router = [
       { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },
       { path: '/student/dashboard/assignments', element: <StudentDashboardAssignments /> },
       { path: '/dashboard/institutions', exact: true, element: <DashboardInstitutions /> },
+      { path: '/edit/institution/:InstitutionId', element: <MyInstitution /> },
       { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
 
 

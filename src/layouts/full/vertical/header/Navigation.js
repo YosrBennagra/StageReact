@@ -5,10 +5,12 @@ import { IconChevronDown, IconHelp } from '@tabler/icons';
 import AppLinks from './AppLinks';
 import QuickLinks from './QuickLinks';
 import React from 'react';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const AppDD = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
-
+  const user = useAuthUser();
+  console.log(user);
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
@@ -100,18 +102,28 @@ const AppDD = () => {
           </Grid>
         </Menu>
       </Box>
-      <Button color="inherit" sx={{color: (theme) => theme.palette.text.secondary}} variant="text" to="/apps/chats" component={Link}>
+      <Button color="inherit" sx={{ color: (theme) => theme.palette.text.secondary }} variant="text" to="/apps/chats" component={Link}>
         Chat
       </Button>
-      <Button color="inherit" sx={{color: (theme) => theme.palette.text.secondary}} variant="text" to="/apps/calendar" component={Link}>
+      <Button color="inherit" sx={{ color: (theme) => theme.palette.text.secondary }} variant="text" to="/apps/calendar" component={Link}>
         Calendar
       </Button>
-      <Button color="inherit" sx={{color: (theme) => theme.palette.text.secondary}} variant="text" to="/apps/email" component={Link}>
+      <Button color="inherit" sx={{ color: (theme) => theme.palette.text.secondary }} variant="text" to="/apps/email" component={Link}>
         Email
       </Button>
-      <Button color="inherit" sx={{color: (theme) => theme.palette.text.secondary}} variant="text" to="/admin/dashboard" component={Link}>
+      <Button color="inherit" sx={{ color: (theme) => theme.palette.text.secondary }} variant="text" to="/admin/dashboard" component={Link}>
         My Dashboard
       </Button>
+      {
+        user.role === 'responsable' ?
+          <Button color="inherit" sx={{ color: (theme) => theme.palette.text.secondary }} variant="text" to={`/edit/institution/${user.institution}`} component={Link}>
+            My Institution
+          </Button>
+          : user.role === 'admin' ? <Button color="inherit" sx={{ color: (theme) => theme.palette.text.secondary }} variant="text" to={`/edit/institution/${user.institution}`} component={Link}>
+            My Institution
+          </Button>
+            : null
+      }
     </>
   );
 };

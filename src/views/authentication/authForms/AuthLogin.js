@@ -52,7 +52,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           isTwoFactorAuthenticationEnabled,
           isEmailConfirmed,
           profilePicture,
-          role
+          role,
+          institution
         } = res.data;
 
         if (!isEmailConfirmed) {
@@ -65,7 +66,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             faSecret,
             isEmailConfirmed,
             profilePicture,
-            role
+            role,
+            institution
           );
           navigate('/auth/verify');
         } else if (isTwoFactorAuthenticationEnabled) {
@@ -81,7 +83,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
               isEmailConfirmed,
               profilePicture,
               formData,
-              role
+              role,
+              institution
             }),
           );
           navigate('/auth/two-steps2');
@@ -95,7 +98,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             faSecret,
             isEmailConfirmed,
             profilePicture,
-            role
+            role,
+            institution
           );
           navigate('/admin/dashboard');
         }
@@ -117,7 +121,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     faSecret,
     isEmailConfirmed,
     profilePicture,
-    role
+    role,
+    institution
   ) => {
     signIn({
       auth: {
@@ -133,7 +138,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         is2FaEnabled: false,
         isAccountVerified: isEmailConfirmed,
         profilePicture: profilePicture,
-        role
+        role,
+        institution
       },
     });
   };

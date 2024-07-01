@@ -4,19 +4,80 @@ import CreateQCM from './utils/CreateQCM';
 import CreateQCU from './utils/CreateQCU';
 import CreateTextQuestion from './utils/CreateTextQuestion';
 import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
-import { Box, Button, Tooltip, MenuItem, Select, FormControl, InputLabel, Accordion, AccordionSummary, Typography, AccordionDetails, Grid, Input } from '@mui/material';
+import { Box, Button, Tooltip, MenuItem, Select, FormControl, InputLabel, Accordion, AccordionSummary, Typography, AccordionDetails, Grid, Input, Autocomplete } from '@mui/material';
 import { IconChevronDown } from '@tabler/icons';
 import CustomFormLabel from 'src/components/forms/theme-elements/CustomFormLabel';
 import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
 import CustomSwitch from 'src/components/forms/theme-elements/CustomSwitch';
-
-
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchGroups } from 'src/store/apps/groups/groupsSlice';
+import { fetchUsers } from 'src/store/apps/users/usersSlice';
 
 export default function CreateAssignment() {
     const [questions, setQuestions] = useState([]);
     const [questionType, setQuestionType] = useState('QCM');
     const { id } = useParams();
     const [assignment, setAssignment] = useState({});
+    const dispatch = useDispatch();
+    const allGroups = useSelector((state) => state.groups.groups);
+    const allUsers = useSelector((state) => state.users.users);
+    const [options, setOptions] = useState([]);
+    const [groups, setGroups] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [assignedUsers, setAssignedUsers] = useState([]);
+    const [assignedGroups, setAssignedGroups] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState([]);
+    useEffect(() => {
+        console.log('All groups:', allGroups);
+        console.log('All users:', allUsers);
+        console.log('Assigned groups:', assignedGroups);
+        console.log('Assigned users:', assignedUsers);
+
+        // Create options for all groups and users
+        const groupOptions = allGroups.map((group) => ({
+            ...group,
+            type: 'Group',
+        }));
+
+        const userOptions = allUsers.map((user) => ({
+            ...user,
+            type: 'User',
+        }));
+
+        // Create options for assigned groups and users
+        const assignedGroupOptions = assignedGroups.map((group) => ({
+            ...group,
+            type: 'Group',
+            assigned: true,
+        }));
+
+        const assignedUserOptions = assignedUsers.map((user) => ({
+            ...user,
+            type: 'User',
+            assigned: true,
+        }));
+
+        // Combine all options, including assigned ones
+        const options = [
+            ...groupOptions,
+            ...userOptions,
+
+        ];
+        const selectedOptions = [
+            ...assignedGroupOptions,
+            ...assignedUserOptions,
+        ]
+        setSelectedOptions(selectedOptions);
+        setOptions(options);
+    }, [allGroups, allUsers, assignedGroups, assignedUsers]);
+
+
+
+    useEffect(() => {
+        dispatch(fetchGroups());
+        dispatch(fetchUsers());
+    }, [dispatch]);
+
     const BCrumb = [
         {
             to: '/admin/dashboard',
@@ -30,6 +91,9 @@ export default function CreateAssignment() {
             title: 'Create',
         },
     ];
+    /* Fetch groups and Users */
+
+    /* Fetch assignment B*/
     useEffect(() => {
         const fetchAssignment = async () => {
             try {
@@ -43,13 +107,15 @@ export default function CreateAssignment() {
                     const [dateEndData, timeEndData] = data.closedAt.split(' ');
                     const [dateStartData, timeStartData] = data.openAt.split(' ');
                     const [dateSheduleData, timeScheduleData] = data.dateSchedule.split(' ');
-                    
-                    console.log("dateEndData: ", dateEndData);
-                    console.log("timeEndData: ", timeEndData);
-                    console.log("dateStartData: ", dateStartData);
-                    console.log("timeStartData: ", timeStartData);
-                    console.log("dateSheduleData: ", dateSheduleData);
-                    console.log("timeSheduleData: ", timeScheduleData);
+                    setDateE(dateEndData);
+                    setTimeE(timeEndData);
+                    setDateS(dateStartData);
+                    setTimeS(timeStartData);
+                    setDateSchedule(dateSheduleData);
+                    setTimeSchedule(timeScheduleData);
+                    setDescription(data.description);
+                    setAssignedUsers(data.assignedToUsers);
+                    setAssignedGroups(data.assignedToGroups);
                 } else {
                     console.error('Failed to fetch assignment');
                 }
@@ -60,7 +126,9 @@ export default function CreateAssignment() {
 
         fetchAssignment();
     }, [id]);
+    /* Fetch assignment E */
 
+    /* Fetch questions B */
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
@@ -149,17 +217,12 @@ export default function CreateAssignment() {
 
     /** Assignement options B **/
     /* Date and Time B */
-
     const [dateS, setDateS] = useState();
     const [dateE, setDateE] = useState();
     const [timeE, setTimeE] = useState();
     const [timeS, setTimeS] = useState();
     const [dateSchedule, setDateSchedule] = useState();
     const [timeSchedule, setTimeSchedule] = useState();
-    const [openAt, setOpenAt] = useState('');
-    const [closeAt, setClosedAt] = useState('');
-
-
     /* Date and Time  E*/
     /* ******************************************************************** */
     /* Switch cases B */
@@ -167,19 +230,11 @@ export default function CreateAssignment() {
     const [isInterval, setIsInterval] = useState(false);
     const [isScheduled, setIsScheduled] = useState(false);
     /* Switch cases E */
+    /* ******************************************************************** */
+    /* Description B */
+    const [description, setDescription] = useState('');
+    /* Description E */
     const handleSaveAssignmentSettings = async () => {
-        console.log('Saving...')
-        console.log('isSheduled: ', isScheduled)
-        console.log('isVisible: ', isVisible)
-        console.log('isInterval: ', isInterval)
-        console.log('Time start: ', timeS)
-        console.log('Time End: ', timeE)
-        console.log('Date start: ', dateS)
-        console.log('Date End: ', dateE)
-        console.log('Date Schedule: ', dateSchedule)
-        console.log('time Schedule: ', timeSchedule)
-
-        /* Instant score B */
         const updatedAssignment = {
             isScheduled: isScheduled,
             isVisible: isVisible,
@@ -187,6 +242,7 @@ export default function CreateAssignment() {
             openAt: `${dateS} ${timeS}`,
             closedAt: `${dateE} ${timeE}`,
             dateSchedule: `${dateSchedule} ${timeSchedule}`,
+            description: description
         };
         try {
             await fetch(`http://localhost:3001/assignments/${id}`, {
@@ -201,15 +257,82 @@ export default function CreateAssignment() {
             console.log(err);
         }
     }
-
-
-
-    /* Instant score E */
     /** Assignement options E **/
+
+    const handleInputChange = (event, value) => {
+        setSelectedOptions(value);
+    };
+
+    const handleConfirmAssignments = async () => {
+        const userIdsToAdd = selectedOptions.filter(option => option.type === 'User').map(user => user._id);
+        const groupIdsToAdd = selectedOptions.filter(option => option.type === 'Group').map(group => group._id);
+        console.log(userIdsToAdd);
+        console.log(JSON.stringify(groupIdsToAdd));
+        try {
+            await fetch(`http://localhost:3001/assignments/${id}/updateAssignedUsers`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userIdsToAdd),
+            });
+            await fetch(`http://localhost:3001/assignments/${id}/updateAssignedGroups`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(groupIdsToAdd),
+            });
+            console.log('Assignment updated successfully.');
+        } catch (error) {
+            console.error('Error updating users/groups to assignment:', error);
+        }
+    };
+
 
     return (
         <>
             <Breadcrumb title="Creating An Assignment" items={BCrumb} />
+            <Box sx={{ my: 3 }}>
+                <Accordion
+                    sx={{
+                        backgroundColor: "#30219c26",
+                    }}
+                >
+                    <AccordionSummary
+                        expandIcon={<IconChevronDown />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header">
+                        <Typography variant="h6">Click here to add groups / users to the assignemnt</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Autocomplete
+                            multiple
+                            fullWidth
+                            id="tags-outlined"
+                            options={options}
+                            getOptionLabel={(option) => option.name || option.username}
+                            groupBy={(option) => option.type}
+                            filterSelectedOptions
+                            value={selectedOptions}
+                            onChange={handleInputChange}
+                            onDelete={(option) => console.log(option)}
+                            renderInput={(params) => (
+                                <CustomTextField
+                                    helperText="Type the name of the user or the group you want to add"
+                                    variant="outlined"
+                                    fullWidth
+                                    {...params}
+                                />
+                            )}
+                            isOptionEqualToValue={(option, value) => option._id === value._id}
+
+                        />
+                        <Button sx={{ mb: 2, float: 'right' }} color='primary' onClick={handleConfirmAssignments}>Confirm</Button>
+
+                    </AccordionDetails>
+                </Accordion>
+            </Box>
             <Box sx={{ my: 3 }}>
                 <Accordion
                     sx={{
@@ -229,11 +352,11 @@ export default function CreateAssignment() {
                                     <>
                                         <Grid item xs={12} lg={4}>
                                             <Typography sx={{ color: (theme) => theme.palette.success.main, fontWeight: 'bold' }}>Start date:</Typography>
-                                            <Input onChange={(e) => setDateS(e.target.value)} type='date'></Input>
+                                            <Input onChange={(e) => setDateS(e.target.value)} type='date' value={dateS}></Input>
                                         </Grid>
                                         <Grid item xs={12} lg={4}>
                                             <Typography sx={{ color: (theme) => theme.palette.success.main, fontWeight: 'bold' }}>Start time:</Typography>
-                                            <Input onChange={(e) => setTimeS(e.target.value)} type='time'  ></Input>
+                                            <Input onChange={(e) => setTimeS(e.target.value)} type='time' value={timeS}></Input>
                                         </Grid>
                                     </>
                                     :
@@ -245,17 +368,17 @@ export default function CreateAssignment() {
                                     </>
                                 }
                                 <Grid item xs={12} lg={4}>
-                                    DeadLine<CustomSwitch checked={isInterval} onClick={(event) => setIsInterval(event.target.checked)} />Interval
+                                    Deadline<CustomSwitch checked={isInterval} onClick={(event) => setIsInterval(event.target.checked)} />Interval
                                 </Grid>
                             </Grid>
                             <Grid item container spacing={3}>
                                 <Grid item xs={12} lg={4}>
                                     <Typography sx={{ color: (theme) => theme.palette.error.main, fontWeight: 'bold' }}>End date:</Typography>
-                                    <Input onChange={(e) => setDateE(e.target.value)} type='date'></Input>
+                                    <Input onChange={(e) => setDateE(e.target.value)} type='date' value={dateE}></Input>
                                 </Grid>
                                 <Grid item xs={12} lg={4}>
                                     <Typography sx={{ color: (theme) => theme.palette.error.main, fontWeight: 'bold' }}>End time:</Typography>
-                                    <Input onChange={(e) => setTimeE(e.target.value)} type='time' ></Input>
+                                    <Input onChange={(e) => setTimeE(e.target.value)} type='time' value={timeE}></Input>
                                 </Grid>
                                 <Grid item xs={12} lg={4}>
                                     Instant Results<CustomSwitch checked={isScheduled} onClick={(event) => setIsScheduled(event.target.checked)} />Scheduled Results
@@ -266,12 +389,11 @@ export default function CreateAssignment() {
                                     <>
                                         <Grid item xs={12} lg={4}>
                                             <Typography sx={{ color: (theme) => theme.palette.success.main, fontWeight: 'bold' }}>Schedule date:</Typography>
-
-                                            <Input onChange={(e) => setDateSchedule(e.target.value)} type='date'></Input>
+                                            <Input onChange={(e) => setDateSchedule(e.target.value)} type='date' value={dateSchedule}></Input>
                                         </Grid>
                                         <Grid item xs={12} lg={4}>
                                             <Typography sx={{ color: (theme) => theme.palette.success.main, fontWeight: 'bold' }}>Schedule time:</Typography>
-                                            <Input onChange={(e) => setTimeSchedule(e.target.value)} type='time'></Input>
+                                            <Input onChange={(e) => setTimeSchedule(e.target.value)} type='time' value={timeSchedule}></Input>
                                         </Grid>
                                     </>
                                     :
@@ -296,13 +418,14 @@ export default function CreateAssignment() {
                                     fullWidth
                                     multiline
                                     rows={4}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    value={description}
                                 />
-                                <Button sx={{ mt: 2, float: 'right' }} color='primary' onClick={handleSaveAssignmentSettings}>Save your settings</Button>
+                                <Button sx={{ float: 'right' }} color='primary' onClick={handleSaveAssignmentSettings}>Save your settings</Button>
                             </Grid>
                         </Grid>
                     </AccordionDetails>
                 </Accordion>
-
             </Box>
             {questions.map((question) => {
                 return (

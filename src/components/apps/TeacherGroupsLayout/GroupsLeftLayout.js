@@ -34,7 +34,7 @@ const GroupsLeftLayout = () => {
   const user = useAuthUser()
 
   useEffect(() => {
-    dispatch(fetchGroups());
+    dispatch(fetchGroups()); 
   }, [dispatch]);
 
   useEffect(() => {

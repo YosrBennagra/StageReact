@@ -11,13 +11,15 @@ import {
   DialogContentText,
 } from '@mui/material';
 import CustomFormLabel from 'src/components/forms/theme-elements/CustomFormLabel';
+import CustomSelect from 'src/components/forms/theme-elements/CustomSelect';
+
 
 const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 const GroupCreate = ({ onAddGroup }) => {
   const [open, setOpen] = useState(false);
   const [groupName, setGroupName] = useState('');
-
+  const [subjects, setSubjects] = useState();
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -86,6 +88,22 @@ const GroupCreate = ({ onAddGroup }) => {
               onChange={handleInputChange}
               helperText="Enter group name in the input above"
             />
+          </DialogContentText>
+          <DialogContentText id="alert-dialog-slide-description" component="div">
+            <CustomFormLabel htmlFor="group-name">Assigne a subject</CustomFormLabel>
+            {/* <CustomSelect
+                id="standard-select-currency"
+                value={currency}
+                onChange={handleChange2}
+                fullWidth
+                variant="outlined"
+              >
+                {currencies.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </CustomSelect> */}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
