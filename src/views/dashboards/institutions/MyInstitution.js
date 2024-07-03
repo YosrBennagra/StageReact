@@ -33,7 +33,8 @@ export default function MyInstitution() {
   });
   const { InstitutionId } = useParams()
 
-  const [institution, setInstitution] = useState(null);
+
+  const [responsables, setReponsables] = useState([]);
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
@@ -42,7 +43,8 @@ export default function MyInstitution() {
       try {
         const response = await axios.get(`http://localhost:3001/institutions/${InstitutionId}`);
         console.log(response.data);
-        setInstitution(response.data);
+        setReponsables(response.data.responsables);
+        console.log("responsables", responsables);
       } catch (error) {
         console.error('Error fetching institution:', error);
       }
@@ -97,20 +99,19 @@ export default function MyInstitution() {
         <Grid item xs={12} sm={4} sx={{ mt: '20px' }} display={'flex'}>
           <ChildCard title="Custom outlined Icon">
             <InlineItemCard>
-              <Chip
-                label="Custom Icon"
-                variant="outlined"
-                color="primary"
-                avatar={<Avatar>M</Avatar>}
-                deleteIcon={<IconCheck width={20} />}
-              />
-              <Chip
-                label="Custom Icon"
-                variant="outlined"
-                color="secondary"
-                avatar={<Avatar>S</Avatar>}
-                deleteIcon={<IconChecks width={20} />}
-              />
+              {responsables ? (
+                responsables.map((responsable) => (
+                  <Chip
+                    key={responsable.id}
+                    label={responsable.name}
+                    variant="outlined"
+                    color="primary"
+                    avatar={<Avatar width="35">{responsable.name[0]}</Avatar>}
+                  />
+                ))
+              ) : (
+                <Typography>No responsables available</Typography>
+              )}
             </InlineItemCard>
           </ChildCard>
         </Grid>

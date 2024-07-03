@@ -27,6 +27,8 @@ export default function CreateAssignment() {
     const [assignedUsers, setAssignedUsers] = useState([]);
     const [assignedGroups, setAssignedGroups] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
+    const [duration, setDuration] = useState(0);
+    const [isDuration, setIsDuration] = useState(false);
     useEffect(() => {
         console.log('All groups:', allGroups);
         console.log('All users:', allUsers);
@@ -116,6 +118,8 @@ export default function CreateAssignment() {
                     setDescription(data.description);
                     setAssignedUsers(data.assignedToUsers);
                     setAssignedGroups(data.assignedToGroups);
+                    setDuration(data.duration);
+                    setIsDuration(data.isDuration);
                 } else {
                     console.error('Failed to fetch assignment');
                 }
@@ -242,8 +246,11 @@ export default function CreateAssignment() {
             openAt: `${dateS} ${timeS}`,
             closedAt: `${dateE} ${timeE}`,
             dateSchedule: `${dateSchedule} ${timeSchedule}`,
-            description: description
+            description: description,
+            duration: duration,
+            isDuration: isDuration,
         };
+        console.log("🚀 ~ file: CreateAssignment.js:251 ~ handleSaveAssignmentSettings ~ updatedAssignment.duration:", updatedAssignment.duration);
         try {
             await fetch(`http://localhost:3001/assignments/${id}`, {
                 method: 'PUT',
@@ -407,7 +414,24 @@ export default function CreateAssignment() {
                                     Hidden<CustomSwitch checked={isVisible} onClick={(event) => setIsVisible(event.target.checked)} />Visible
                                 </Grid>
                             </Grid>
-
+                            <Grid item container spacing={3}>{/* Interval/Deadline */}
+                                {isDuration ?
+                                    <>
+                                        <Grid item xs={12} lg={8}>
+                                            <Typography sx={{ color: (theme) => theme.palette.success.main, fontWeight: 'bold' }}>Set the duration time in minutes</Typography>
+                                            <Input onChange={(e) => setDuration(e.target.value)} type='number' value={duration}></Input>
+                                        </Grid>
+                                    </>
+                                    :
+                                    <>
+                                        <Grid item xs={12} lg={8}>
+                                        </Grid>
+                                    </>
+                                }
+                                <Grid item xs={12} lg={4}>
+                                    Set Duration<CustomSwitch checked={isDuration} onClick={(event) => setIsDuration(event.target.checked)} />No Duration
+                                </Grid>
+                            </Grid>
                             <Grid item xs={12} lg={12}>
                                 <CustomFormLabel sx={{ mt: 0 }} >
                                     Description:
@@ -423,6 +447,7 @@ export default function CreateAssignment() {
                                 />
                                 <Button sx={{ float: 'right' }} color='primary' onClick={handleSaveAssignmentSettings}>Save your settings</Button>
                             </Grid>
+
                         </Grid>
                     </AccordionDetails>
                 </Accordion>

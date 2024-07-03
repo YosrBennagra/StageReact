@@ -22,11 +22,6 @@ export default function QCU({ question }) {
 
 
 
-
-
-
-
-
     return (
         <ParentCard
             title={<Typography variant="h4">{questionContent}</Typography>}

@@ -10,7 +10,7 @@ import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 const AppDD = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
   const user = useAuthUser();
-  console.log(user);
+  console.log(user); 
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
