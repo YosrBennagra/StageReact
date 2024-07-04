@@ -34,7 +34,8 @@ export default function MyInstitution() {
   const { InstitutionId } = useParams()
 
 
-  const [responsables, setReponsables] = useState([]);
+  const [responsables, setReponsables] = useState();
+  const [subjects, setSubjects] = useState([]);
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
@@ -42,9 +43,14 @@ export default function MyInstitution() {
     const fetchInstitution = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/institutions/${InstitutionId}`);
-        console.log(response.data);
-        setReponsables(response.data.responsables);
-        console.log("responsables", responsables);
+        const response2 = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${InstitutionId}`);
+        const responseUser = await axios.get(`http://localhost:3001/users/institutions/${InstitutionId}`);
+        setReponsables(responseUser.data);
+        if (response2.data) {
+          setSubjects(response2.data);
+        } else {
+          setSubjects([]);
+        }
       } catch (error) {
         console.error('Error fetching institution:', error);
       }
@@ -61,7 +67,7 @@ export default function MyInstitution() {
       </Breadcrumb>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={8} sx={{ mt: '20px' }}>
-          <ParentCard title='Ordrinary Form'>
+          <ParentCard title='Add a subject'>
             <form>
               <CustomFormLabel htmlFor="email-address">Subject Name</CustomFormLabel>
               <CustomTextField id="email-address" variant="outlined" fullWidth />
@@ -88,7 +94,7 @@ export default function MyInstitution() {
                 label="Add a department"
                 sx={{ mb: 1 }}
               />
-
+              <br />
               <Button color="primary" variant="contained">
                 Submit
               </Button>
@@ -97,16 +103,16 @@ export default function MyInstitution() {
         </Grid>
 
         <Grid item xs={12} sm={4} sx={{ mt: '20px' }} display={'flex'}>
-          <ChildCard title="Custom outlined Icon">
+          <ChildCard title="Responsables of the institution">
             <InlineItemCard>
               {responsables ? (
                 responsables.map((responsable) => (
                   <Chip
                     key={responsable.id}
-                    label={responsable.name}
+                    label={responsable.username}
                     variant="outlined"
                     color="primary"
-                    avatar={<Avatar width="35">{responsable.name[0]}</Avatar>}
+                    avatar={<Avatar width="35"  >{responsable.username.charAt(0)}</Avatar>}
                   />
                 ))
               ) : (
@@ -121,93 +127,51 @@ export default function MyInstitution() {
             <Table aria-label="simple table" sx={{ whiteSpace: 'nowrap' }}>
               <TableHead>
                 <TableRow>
+
                   <TableCell>
-                    <Typography variant="h6">Users</Typography>
+                    <Typography variant="h6">Subject Name</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="h6">Project Name</Typography>
+                    <Typography variant="h6">Coeficient</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="h6">Team</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="h6">Status</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="h6">Budget</Typography>
+                    <Typography variant="h6">Departement</Typography>
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {basicsTableData.map((basic) => (
-                  <TableRow key={basic.id}>
-                    <TableCell>
-                      <Stack direction="row" spacing={2}>
-                        <Avatar src={basic.imgsrc} alt={basic.imgsrc} width="35" />
-                        <Box>
-                          <Typography variant="h6" fontWeight="600">
-                            {basic.name}
-                          </Typography>
-                          <Typography color="textSecondary" variant="subtitle2">
-                            {basic.post}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>
-                      <Typography color="textSecondary" variant="h6" fontWeight="400">
-                        {basic.pname}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Stack direction="row">
-                        <AvatarGroup max={4}>
-                          {basic.teams.map((team) => (
-                            <Avatar
-                              key={team.id}
-                              width="35"
-                              sx={{
-                                bgcolor: team.color,
-                              }}
-                            >
-                              {team.text}
-                            </Avatar>
-                          ))}
-                        </AvatarGroup>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        sx={{
-                          bgcolor:
-                            basic.status === 'Active' ? (theme) => theme.palette.success.light :
-                              basic.status === 'Pending' ? (theme) => theme.palette.warning.light :
-                                basic.status === 'Completed' ? (theme) => theme.palette.primary.light :
-                                  basic.status === 'Cancel' ? (theme) => theme.palette.error.light :
-                                    (theme) => theme.palette.secondary.light,
-                          color:
-                            basic.status === 'Active' ? (theme) => theme.palette.success.main :
-                              basic.status === 'Pending' ? (theme) => theme.palette.warning.main :
-                                basic.status === 'Completed' ? (theme) => theme.palette.primary.main :
-                                  basic.status === 'Cancel' ? (theme) => theme.palette.error.main :
-                                    (theme) => theme.palette.secondary.main,
-                          borderRadius: "8px"
-                        }}
-                        size="small"
-                        label={basic.status}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="h6">${basic.budget}k</Typography>
+                {subjects && subjects.length > 0 ? (
+                  subjects.map((basic) => (
+                    <TableRow key={basic.id}>
+                      <TableCell>
+                        <Typography variant="h6" fontWeight="600">
+                          {basic.name}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography color="textSecondary" variant="h6" fontWeight="400">
+                          {basic.coefficient}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography color="textSecondary" variant="h6" fontWeight="400">
+                          {basic.departement ? basic.departement : 'No department'}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3}>
+                      <Typography>No subjects available</Typography>
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>
         </Grid>
       </Grid>
-
     </>
-  )
+  );
 }

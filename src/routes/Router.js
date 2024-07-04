@@ -138,7 +138,6 @@ const Router = [
       { path: '/', element: <Navigate to="/landingpage" /> },
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
-      
       { path: '/admin/dashboard', exact: true, element: <DashboardAdmin /> },
       { path: '/dashboard/students', exact: true, element: <DashboardStudent /> },
       { path: '/dashboard/groups', exact: true, element: <DashboardGroup /> },
@@ -147,11 +146,8 @@ const Router = [
       { path: '/dashboard/institutions', exact: true, element: <DashboardInstitutions /> },
       { path: '/edit/institution/:InstitutionId', element: <MyInstitution /> },
       { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
-
-
       { path: '/create/assignment/:id', element: <CreateAssignment /> },
       { path: '/pass/assignment/:id', element: <StudentAssignment /> },
-      
       { path: '/apps/chats', element: <Chats /> },
       { path: '/apps/notes', element: <Notes /> },
       { path: '/apps/calendar', element: <Calendar /> },

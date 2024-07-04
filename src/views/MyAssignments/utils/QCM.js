@@ -16,8 +16,6 @@ export default function QCM({ question }) {
     const initialContent = question && question.content ? question.content : '';
     const initialScore = question && question.score ? question.score : 0;
     const assignmentid = question && question.assignmentId ? question.assignmentId : '';
-    console.log("🚀 ~ file: QCM.js:19 ~ QCM ~ assignmentid:", assignmentid);
-
     const [answers, setAnswers] = useState(initialAnswers);
     const [questionContent, setQuestionContent] = useState(initialContent);
     const [questionScore, setQuestionScore] = useState(initialScore);

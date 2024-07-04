@@ -25,6 +25,7 @@ import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
 import PageContainer from 'src/components/container/PageContainer';
 import { VerticalAlignCenter } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
+import { format } from 'date-fns';
 
 const BCrumb = [
   {
@@ -164,7 +165,7 @@ export default function DashboardAssignments() {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography variant="h6">{assignment.createAtdate}</Typography>
+                      <Typography variant="h6">{ format(new Date(assignment.createAtdate), `d MMM yyyy HH:mm`) }</Typography>
                     </TableCell>
                     <TableCell>
                       <IconButton >

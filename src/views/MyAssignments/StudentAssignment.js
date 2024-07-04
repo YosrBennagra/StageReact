@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardContent, CardHeader, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Stack, Typography } from '@mui/material';
 import { IconChevronDown, IconClock, IconClockOff, IconInfoCircle, IconNote } from '@tabler/icons';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import ChildCard from 'src/components/shared/ChildCard';
 import QCM from './utils/QCM';
 import QCU from './utils/QCU';
@@ -23,6 +23,8 @@ export default function StudentAssignment() {
     const [dateSchedule, setDateSchedule] = useState(null);
     const [timeSchedule, setTimeSchedule] = useState(null);
     const [description, setDescription] = useState(null);
+    const [duration, setDuration] = useState(null);
+    const navigate = useNavigate()
     useEffect(() => {
         const getAssignmentDetails = async () => {
             try {
@@ -40,6 +42,7 @@ export default function StudentAssignment() {
                     const [DateEnd, timeEnd] = response.data.closedAt.split(' ');
                     setEndTime(timeEnd);
                     setEndDate(DateEnd);
+                    setDuration(response.data.duration);
                     console.log("🚀 ~ file: StudentAssignment.js:39 ~ getAssignmentDetails ~ timeS:", timeS);
                     console.log("🚀 ~ file: StudentAssignment.js:39 ~ getAssignmentDetails ~ dateS:", dateS);
                 } else {
@@ -98,6 +101,7 @@ export default function StudentAssignment() {
             });
             if (response.ok) {
                 console.log("🚀 ~ file: StudentAssignment.js:60 ~ handleClose ~ response:", response);
+                navigate('/student/dashboard/assignments')
             } else {
                 console.error('Failed to add the answer');
             }
@@ -156,7 +160,7 @@ export default function StudentAssignment() {
                                 </Stack>
                                 <Stack direction="row" gap={2} alignItems="center" mb={3}>
                                     <IconClock size="21" />
-                                    <Typography display={"flex"}><Typography variant="h6">Time to pass the assignment</Typography><Typography>$Time</Typography></Typography>
+                                    <Typography display={"flex"}><Typography variant="h6">Time to pass the assignment</Typography><Typography variant='h6' color={"primary"} marginX={1}>{duration}</Typography> Minute(s)</Typography>
                                 </Stack>
                                 <Stack direction="row" gap={2} alignItems="center" mb={3}>
                                     <IconClockOff size="21" />
