@@ -9,6 +9,8 @@ import './_mockApis';
 import './utils/i18n';
 import AuthProvider from 'react-auth-kit';
 import createStore from 'react-auth-kit/createStore';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const storeAuth = createStore({
   authName: '_auth',
@@ -24,7 +26,9 @@ root.render(
     <Suspense fallback={<Spinner />}>
       <AuthProvider store={storeAuth}>
         <BrowserRouter>
-          <App />
+          <DndProvider backend={HTML5Backend}>
+            <App />
+          </DndProvider>
         </BrowserRouter>
       </AuthProvider>
     </Suspense>

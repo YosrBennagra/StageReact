@@ -80,9 +80,9 @@ const profile = [
     icon: icon5,
   },
   {
-    href: '/apps/notes',
-    title: 'My Tasks',
-    subtitle: 'To-do and Daily Tasks',
+    href: '/MySchedule',
+    title: 'My Schedule',
+    subtitle: 'Your calendar',
     icon: icon3,
   },
 ];
