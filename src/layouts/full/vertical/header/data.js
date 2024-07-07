@@ -68,12 +68,6 @@ const notifications = [
 //
 const profile = [
   {
-    href: '/user-profile',
-    title: 'My Profile',
-    subtitle: 'Account Settings',
-    icon: icon1,
-  },
-  {
     href: '/student/dashboard/assignments',
     title: 'My Assignments',
     subtitle: 'Quiz & tests',

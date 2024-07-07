@@ -7,10 +7,13 @@ import { IconMail } from '@tabler/icons';
 import { Stack } from '@mui/system';
 
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
-import unlimitedImg from 'src/assets/images/backgrounds/unlimited-bg.png';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const Profile = () => {
+  const user = useAuthUser();
+  console.log("🚀 ~ file: Profile.js:15 ~ Profile ~ user:", user);
+
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
@@ -62,15 +65,14 @@ const Profile = () => {
       >
         <Scrollbar sx={{ height: '100%', maxHeight: '85vh' }}>
           <Box p={3}>
-            <Typography variant="h5">User Profile</Typography>
             <Stack direction="row" py={3} spacing={2} alignItems="center">
               <Avatar src={ProfileImg} alt={ProfileImg} sx={{ width: 95, height: 95 }} />
               <Box>
-                <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-                  Mathew Anderson
+                <Typography variant="subtitle2" textTransform={'capitalize'} color="textPrimary" fontWeight={600}>
+                  {user.name}
                 </Typography>
-                <Typography variant="subtitle2" color="textSecondary">
-                  Designer
+                <Typography variant="subtitle2" textTransform={'capitalize'} color="textSecondary">
+                  {user.role}
                 </Typography>
                 <Typography
                   variant="subtitle2"
@@ -80,7 +82,7 @@ const Profile = () => {
                   gap={1}
                 >
                   <IconMail width={15} height={15} />
-                  info@modernize.com
+                  {user.email}
                 </Typography>
               </Box>
             </Stack>
@@ -142,20 +144,6 @@ const Profile = () => {
               </Box>
             ))}
             <Box mt={2}>
-              <Box bgcolor="primary.light" p={3} mb={3} overflow="hidden" position="relative">
-                <Box display="flex" justifyContent="space-between">
-                  <Box>
-                    <Typography variant="h5" mb={2}>
-                      Unlimited <br />
-                      Access
-                    </Typography>
-                    <Button variant="contained" color="primary">
-                      Upgrade
-                    </Button>
-                  </Box>
-                  <img src={unlimitedImg} alt="unlimited" className="signup-bg"></img>
-                </Box>
-              </Box>
               <Button
                 to="/auth/login"
                 variant="outlined"

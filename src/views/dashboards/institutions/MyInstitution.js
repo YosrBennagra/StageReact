@@ -6,6 +6,7 @@ import { useParams } from 'react-router'
 
 import CustomCheckbox from 'src/components/forms/theme-elements/CustomCheckbox'
 import CustomFormLabel from 'src/components/forms/theme-elements/CustomFormLabel'
+import CustomSelect from 'src/components/forms/theme-elements/CustomSelect'
 import CustomTextField from 'src/components/forms/theme-elements/CustomTextField'
 import ChildCard from 'src/components/shared/ChildCard'
 import InlineItemCard from 'src/components/shared/InlineItemCard'
@@ -98,6 +99,14 @@ export default function MyInstitution() {
                 sx={{ mb: '10px' }}
                 onChange={(e) => setNewCoef(e.target.value)}
               />
+{/*               <CustomFormLabel >Teacher</CustomFormLabel>
+              <CustomSelect
+                type="number"
+                variant="outlined"
+                fullWidth
+                sx={{ mb: '10px' }}
+                onChange={(e) => setNewCoef(e.target.value)}
+              /> */}
               {
                 isDep ?
                   <>
@@ -198,7 +207,7 @@ export default function MyInstitution() {
           </TableContainer>
         </Grid>
       </Grid>
-      
+
     </>
   );
 }

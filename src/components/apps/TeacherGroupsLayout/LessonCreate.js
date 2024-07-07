@@ -48,7 +48,7 @@ const LessonCreate = ({ onAddLesson }) => {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
-    formData.append('group', currentSelectedGroup); // Append selected group ID
+    formData.append('group', currentSelectedGroup); 
 
     for (let i = 0; i < files.length; i++) {
       formData.append('files', files[i]);
@@ -62,7 +62,7 @@ const LessonCreate = ({ onAddLesson }) => {
 
       if (response.ok) {
         const createdLesson = await response.json();
-        onAddLesson(createdLesson); // Update local state with the new lesson
+        onAddLesson(createdLesson); 
         console.log('Successfully added the lesson');
         handleClose();
       } else {

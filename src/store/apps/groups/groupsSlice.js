@@ -13,13 +13,13 @@ export const fetchGroupMembers = createAsyncThunk('groups/fetchGroupMembers', as
 
 export const fetchGroupLessons = createAsyncThunk('groups/fetchGroupLessons', async (groupId) => {
   const response = await axios.get(`http://localhost:3001/lessons/bygroup/${groupId}`);
-  return response.data; // Assuming response.data is an array of lessons
+  return response.data; 
 });
 
 export const createLesson = createAsyncThunk('groups/createLesson', async (lessonData) => {
   try {
     const response = await axios.post('http://localhost:3001/lessons', lessonData);
-    return response.data; // Assuming response.data is the created lesson object
+    return response.data;
   } catch (error) {
     console.error('Error creating lesson:', error);
     throw error;
@@ -32,7 +32,7 @@ const groupsSlice = createSlice({
     groups: [],
     selectedGroup: null,
     members: [],
-    lessons: [], // Initialize lessons as an empty array
+    lessons: [], 
     status: 'idle',
     error: null,
   },
@@ -40,10 +40,10 @@ const groupsSlice = createSlice({
     selectGroup(state, action) {
       state.selectedGroup = action.payload;
       state.members = [];
-      state.lessons = []; // Clear lessons when a new group is selected
+      state.lessons = []; 
     },
     addLesson(state, action) {
-      state.lessons.push(action.payload); // Add the new lesson to the lessons array
+      state.lessons.push(action.payload); 
     },
   },
   extraReducers: (builder) => {
@@ -75,7 +75,7 @@ const groupsSlice = createSlice({
       })
       .addCase(fetchGroupLessons.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.lessons = action.payload; // Update lessons with the fetched data
+        state.lessons = action.payload; 
       })
       .addCase(fetchGroupLessons.rejected, (state, action) => {
         state.status = 'failed';
@@ -83,7 +83,7 @@ const groupsSlice = createSlice({
       })
       .addCase(createLesson.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.lessons.push(action.payload); // Add the created lesson to the lessons array
+        state.lessons.push(action.payload);
       })
       .addCase(createLesson.rejected, (state, action) => {
         state.status = 'failed';

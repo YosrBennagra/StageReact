@@ -35,10 +35,9 @@ const userSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(acceptUser.fulfilled, (state, action) => {
-        const index = state.users.findIndex(user => user.id === action.payload.id);
-        if (index !== -1) {
-          state.users[index] = action.payload;
-        }
+        state.users = state.users.map(user =>
+          user._id === action.payload._id ? action.payload : user
+        );
       });
   },
 });
