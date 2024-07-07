@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Box,
@@ -9,17 +9,37 @@ import {
   DialogContent,
   DialogActions,
   DialogContentText,
+  MenuItem,
+  Select,
 } from '@mui/material';
 import CustomFormLabel from 'src/components/forms/theme-elements/CustomFormLabel';
-import CustomSelect from 'src/components/forms/theme-elements/CustomSelect';
-
+import axios from 'axios';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 const GroupCreate = ({ onAddGroup }) => {
   const [open, setOpen] = useState(false);
   const [groupName, setGroupName] = useState('');
-  const [subjects, setSubjects] = useState();
+  const [subject, setSubject] = useState('');
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const user = useAuthUser();
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${user.institution}`);
+        setSubjects(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchSubjects();
+  }, []);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -31,6 +51,7 @@ const GroupCreate = ({ onAddGroup }) => {
   const handleAddGroup = async () => {
     const newGroup = {
       name: groupName,
+      subject: subject,
     };
 
     try {
@@ -57,6 +78,10 @@ const GroupCreate = ({ onAddGroup }) => {
 
   const handleInputChange = (event) => {
     setGroupName(event.target.value);
+  };
+
+  const handleSubjectChange = (event) => {
+    setSubject(event.target.value);
   };
 
   return (
@@ -90,20 +115,27 @@ const GroupCreate = ({ onAddGroup }) => {
             />
           </DialogContentText>
           <DialogContentText id="alert-dialog-slide-description" component="div">
-            <CustomFormLabel htmlFor="group-name">Assigne a subject</CustomFormLabel>
-            {/* <CustomSelect
-                id="standard-select-currency"
-                value={currency}
-                onChange={handleChange2}
-                fullWidth
-                variant="outlined"
-              >
-                {currencies.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+            <CustomFormLabel htmlFor="group-name">Assign a subject</CustomFormLabel>
+            <Select
+              labelId="select-subject-label"
+              id="select-subject"
+              value={subject}
+              onChange={handleSubjectChange}
+              label="Subjects"
+              fullWidth
+              variant="outlined"
+              disabled={loading || subjects.length === 0}
+            >
+              {loading ? (
+                <MenuItem disabled>Loading subjects...</MenuItem>
+              ) : (
+                subjects.map((subject) => (
+                  <MenuItem key={subject._id} value={subject.name}>
+                    {subject.name}
                   </MenuItem>
-                ))}
-              </CustomSelect> */}
+                ))
+              )}
+            </Select>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

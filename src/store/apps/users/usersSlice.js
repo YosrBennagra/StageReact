@@ -6,6 +6,13 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
   return response.data;
 });
 
+export const acceptUser = createAsyncThunk('users/acceptUser', async (user) => {
+  console.log("🚀 ~ file: usersSlice.js:13 ~ acceptUser ~ user:", user);
+  const response = await axios.patch(`http://localhost:3001/users/${user._id}/accept`);
+  return response.data;
+});
+
+
 const userSlice = createSlice({
   name: 'users',
   initialState: {
@@ -26,6 +33,12 @@ const userSlice = createSlice({
       .addCase(fetchUsers.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+      })
+      .addCase(acceptUser.fulfilled, (state, action) => {
+        const index = state.users.findIndex(user => user.id === action.payload.id);
+        if (index !== -1) {
+          state.users[index] = action.payload;
+        }
       });
   },
 });

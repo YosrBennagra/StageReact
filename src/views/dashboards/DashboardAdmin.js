@@ -20,7 +20,7 @@ const topcards = [
     roles: ['admin']
   },
   {
-    href: '/apps/contacts',
+    href: '/responsables',
     icon: icon1,
     title: 'Responsables',
     digits: '48',
@@ -28,7 +28,7 @@ const topcards = [
     roles: ['admin', 'responsable']
   },
   {
-    href: '/user-profile',
+    href: '/teachers',
     icon: icon2,
     title: 'Teachers',
     digits: '3,685',

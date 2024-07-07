@@ -6,6 +6,7 @@ import DashboardRequests from 'src/views/dashboards/requests/DashboardRequests';
 
 
 
+
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
@@ -119,6 +120,8 @@ const Landingpage = Loadable(lazy(() => import('../views/pages/landingpage/Landi
 
 // dashboards 
 const DashboardAdmin = Loadable(lazy(() => import('../views/dashboards/DashboardAdmin')));
+const Responsables = Loadable(lazy(() => import('../views/dashboards/responsables/Responsables')));
+const Teachers = Loadable(lazy(() => import('../views/dashboards/teachers/Teachers')));
 const DashboardStudent = Loadable(lazy(() => import('../views/dashboards/students/DashboardStudent')));
 const DashboardGroup = Loadable(lazy(() => import('../views/dashboards/groups/DashboardGroup')));
 const DashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/DashboardAssignments')));
@@ -139,6 +142,8 @@ const Router = [
       { path: '/dashboards/modern', exact: true, element: <ModernDash /> },
       { path: '/dashboards/ecommerce', exact: true, element: <EcommerceDash /> },
       { path: '/admin/dashboard', exact: true, element: <DashboardAdmin /> },
+      { path: '/responsables', exact: true, element: <Responsables /> },
+      { path: '/teachers', exact: true, element: <Teachers /> },
       { path: '/dashboard/students', exact: true, element: <DashboardStudent /> },
       { path: '/dashboard/groups', exact: true, element: <DashboardGroup /> },
       { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },

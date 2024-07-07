@@ -34,10 +34,15 @@ export default function MyInstitution() {
   const { InstitutionId } = useParams()
 
 
+
   const [responsables, setReponsables] = useState();
   const [subjects, setSubjects] = useState([]);
+  const [isDep, setIsDep] = useState(false);
+  const [newSubject, setNewSubject] = useState('');
+  const [newCoef, setNewCoef] = useState(0);
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
+    setIsDep(!isDep);
   };
   useEffect(() => {
     const fetchInstitution = async () => {
@@ -58,6 +63,19 @@ export default function MyInstitution() {
 
     fetchInstitution();
   }, [InstitutionId]);
+
+  const handleAddSubject = async () => {
+    try {
+      const response = await axios.post(`http://localhost:3001/subjects`, {
+        name: newSubject,
+        coefficient: newCoef,
+        institution: InstitutionId
+      });
+      setSubjects([...subjects, response.data]);
+    } catch (error) {
+      console.error('Error adding subject:', error);
+    }
+  };
   return (
     <>
       <Breadcrumb title="My Institution" items={BCrumb}>
@@ -70,18 +88,24 @@ export default function MyInstitution() {
           <ParentCard title='Add a subject'>
             <form>
               <CustomFormLabel htmlFor="email-address">Subject Name</CustomFormLabel>
-              <CustomTextField id="email-address" variant="outlined" fullWidth />
+              <CustomTextField id="email-address" variant="outlined" fullWidth onChange={(e) => setNewSubject(e.target.value)} />
 
-              <CustomFormLabel htmlFor="ordinary-outlined-password-input">Coefficient</CustomFormLabel>
+              <CustomFormLabel >Coefficient</CustomFormLabel>
               <CustomTextField
-                id="ordinary-outlined-password-input"
-                type="password"
-                autoComplete="current-password"
+                type="number"
                 variant="outlined"
                 fullWidth
                 sx={{ mb: '10px' }}
+                onChange={(e) => setNewCoef(e.target.value)}
               />
-
+              {
+                isDep ?
+                  <>
+                    <CustomFormLabel htmlFor="email-address" >Departement Name</CustomFormLabel>
+                    <CustomTextField variant="outlined" fullWidth />
+                  </> :
+                  null
+              }
               <FormControlLabel
                 control={
                   <CustomCheckbox
@@ -95,7 +119,9 @@ export default function MyInstitution() {
                 sx={{ mb: 1 }}
               />
               <br />
-              <Button color="primary" variant="contained">
+
+
+              <Button color="primary" variant="contained" onClick={handleAddSubject}>
                 Submit
               </Button>
             </form>
@@ -172,6 +198,7 @@ export default function MyInstitution() {
           </TableContainer>
         </Grid>
       </Grid>
+      
     </>
   );
 }

@@ -1,21 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Box, Drawer, useMediaQuery, Tabs, Tab, Avatar, Chip, Tooltip, Divider } from '@mui/material';
-import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
-import EmailLists from '../../../components/apps/TeacherGroupsLayout/EmailList';
-import EmailSearch from '../../../components/apps/TeacherGroupsLayout/EmailSearch';
-import EmailContent from '../../../components/apps/TeacherGroupsLayout/EmailContent';
-import PageContainer from '../../../components/container/PageContainer';
+import { TabContext, TabPanel } from '@mui/lab';
+import {
+    Avatar,
+    Box,
+    Button,
+    Chip,
+    Divider,
+    Drawer,
+    Fade,
+    Tab,
+    Tabs,
+    Tooltip,
+    useMediaQuery,
+} from '@mui/material';
+import { IconBook2, IconUser } from '@tabler/icons';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import { useDispatch, useSelector } from 'react-redux';
+import StudentSearch from 'src/components/apps/TeacherGroupsLayout/StudentSearch';
 import AppCard from 'src/components/shared/AppCard';
 import breadcrumbImg from '../../../assets/images/breadcrumb/emailSv.png';
-import { TabContext, TabPanel } from '@mui/lab';
-import { IconBook2, IconUser } from '@tabler/icons';
+import EmailContent from '../../../components/apps/TeacherGroupsLayout/EmailContent';
 import GroupsLeftLayout from '../../../components/apps/TeacherGroupsLayout/GroupsLeftLayout';
-import { useSelector, useDispatch } from 'react-redux';
-import Fade from '@mui/material/Fade';
-import StudentSearch from 'src/components/apps/TeacherGroupsLayout/StudentSearch';
-import axios from 'axios';
-import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import { fetchGroupMembers } from '../../../store/apps/groups/groupsSlice';
+import LessonList from '../../../components/apps/TeacherGroupsLayout/LessonList';
+import PageContainer from '../../../components/container/PageContainer';
+import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
+import { fetchGroupLessons, fetchGroupMembers, selectGroup } from '../../../store/apps/groups/groupsSlice'; // Update with appropriate actions
 
 const drawerWidth = 400;
 const secdrawerWidth = 400;
@@ -31,17 +41,17 @@ const DashboardGroup = () => {
     const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
     const dispatch = useDispatch();
-    const { members: globalMembers } = useSelector((state) => state.groups);
+    const { selectedLesson, members: globalMembers } = useSelector((state) => state.groups);
+
     const [groupMembers, setGroupMembers] = useState([]);
     const [value, setValue] = useState('1');
     const currentSelectedGroup = useSelector((state) => state.groups.selectedGroup);
     const currentLoggedInUser = useAuthUser();
 
     useEffect(() => {
-        if (currentSelectedGroup) {
-            dispatch(fetchGroupMembers(currentSelectedGroup));
-        }
-    }, [currentSelectedGroup, dispatch]);
+        dispatch(fetchGroupMembers(currentSelectedGroup));
+        dispatch(fetchGroupLessons());
+    }, [dispatch]);
 
     useEffect(() => {
         if (globalMembers && Array.isArray(globalMembers)) {
@@ -50,11 +60,6 @@ const DashboardGroup = () => {
             setGroupMembers([]);
         }
     }, [globalMembers]);
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
     const handleDeleteUserFromGroup = async (id) => {
         console.log('User To Delete: ', id, currentSelectedGroup);
         try {
@@ -64,7 +69,9 @@ const DashboardGroup = () => {
             console.error('Error removing user:', error);
         }
     };
-
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
     return (
         <PageContainer title="Groups">
             <Breadcrumb title="Groups">
@@ -94,7 +101,8 @@ const DashboardGroup = () => {
                         minWidth: secdrawerWidth,
                         width: { xs: '100%', md: secdrawerWidth, lg: secdrawerWidth },
                         flexShrink: 0,
-                    }}>
+                    }}
+                >
                     <TabContext value={value}>
                         <Tabs
                             variant="fullWidth"
@@ -117,9 +125,8 @@ const DashboardGroup = () => {
                             key="1"
                             value="1"
                         >
-                            <EmailSearch onClick={() => setLeftSidebarOpen(true)} />
-                            <Divider sx={{ my: 1 }} />
-                            <EmailLists showrightSidebar={() => setRightSidebarOpen(true)} />
+                            <Divider sx={{ mt: 1 }} />
+                            <LessonList showrightSidebar={() => setRightSidebarOpen(true)} />
                         </TabPanel>
                         <TabPanel
                             key="2"
@@ -180,7 +187,7 @@ const DashboardGroup = () => {
                         }}
                     >
                         <Box>
-                            <EmailContent />
+                            <EmailContent lesson={selectedLesson} />
                         </Box>
                     </Drawer>
                 ) : (
@@ -208,7 +215,7 @@ const DashboardGroup = () => {
                                     Back{' '}
                                 </Button>
                             </Box>
-                            <EmailContent />
+                            <EmailContent lesson={selectedLesson} />
                         </Box>
                     </Drawer>
                 )}

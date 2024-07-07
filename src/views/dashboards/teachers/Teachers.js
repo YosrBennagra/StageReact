@@ -18,7 +18,7 @@ const BCrumb = [
   },
 ];
 
-export default function DashboardStudent() {
+export default function Teachers() {
   const [students, setStudents] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -27,7 +27,7 @@ export default function DashboardStudent() {
 
   const fetchStudents = async (page, rowsPerPage, search) => {
     try {
-      const response = await axios.get('http://localhost:3001/users/role/student', {
+      const response = await axios.get('http://localhost:3001/users/role/teacher', {
         params: {
           search: search,
           limit: rowsPerPage,
