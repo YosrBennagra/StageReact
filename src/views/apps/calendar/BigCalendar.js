@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CardContent,
   Button,
@@ -14,21 +14,24 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import moment from 'moment';
-import Events from './EventData';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 import './Calendar.css';
 import PageContainer from '../../../components/container/PageContainer';
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
 import { IconCheck } from '@tabler/icons';
 import BlankCard from '../../../components/shared/BlankCard';
+import { fetchEvents, createEvent, updateEvent, deleteEvent } from './event-api'
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
+const DnDCalendar = withDragAndDrop(Calendar);
 
 const BigCalendar = () => {
-  const [calevents, setCalEvents] = useState(Events);
-  const [open, setOpen] = React.useState(false);
+  const [calevents, setCalEvents] = useState([]);
+  const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [slot, setSlot] = useState();
   const [start, setStart] = useState();
@@ -36,39 +39,41 @@ const BigCalendar = () => {
   const [color, setColor] = useState('default');
   const [update, setUpdate] = useState();
 
+  useEffect(() => {
+    console.log('Component mounted');
+    const loadEvents = async () => {
+      try {
+        console.log('Fetching events...');
+        const events = await fetchEvents();
+        console.log('Events fetched:', events);
+        setCalEvents(events);
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = today.getMonth();
+        console.log('DATEEEEEE', new Date(y, m, 5))
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+    loadEvents();
+  }, []);
+
   const ColorVariation = [
-    {
-      id: 1,
-      eColor: '#1a97f5',
-      value: 'default',
-    },
-    {
-      id: 2,
-      eColor: '#39b69a',
-      value: 'green',
-    },
-    {
-      id: 3,
-      eColor: '#fc4b6c',
-      value: 'red',
-    },
-    {
-      id: 4,
-      eColor: '#615dff',
-      value: 'azure',
-    },
-    {
-      id: 5,
-      eColor: '#fdd43f',
-      value: 'warning',
-    },
+    { id: 1, eColor: '#1a97f5', value: 'default' },
+    { id: 2, eColor: '#39b69a', value: 'green' },
+    { id: 3, eColor: '#fc4b6c', value: 'red' },
+    { id: 4, eColor: '#615dff', value: 'azure' },
+    { id: 5, eColor: '#fdd43f', value: 'warning' },
   ];
+
   const addNewEventAlert = (slotInfo) => {
     setOpen(true);
     setSlot(slotInfo);
     setStart(slotInfo.start);
     setEnd(slotInfo.end);
+    console.log('Adding new event:', slotInfo);
   };
+
   const editEvent = (event) => {
     setOpen(true);
     const newEditEvent = calevents.find((elem) => elem.title === event.title);
@@ -78,47 +83,30 @@ const BigCalendar = () => {
     setStart(newEditEvent.start);
     setEnd(newEditEvent.end);
     setUpdate(event);
+    console.log('Editing event:', event);
   };
-  const updateEvent = (e) => {
-    e.preventDefault();
-    setCalEvents(
-      calevents.map((elem) => {
-        if (elem.title === update.title) {
-          return { ...elem, title, start, end, color };
-        }
-        return elem;
-      }),
-    );
-    setOpen(false);
-    setTitle('');
-    setColor('');
-    setStart('');
-    setEnd('');
-    setUpdate(null);
-  };
-  const inputChangeHandler = (e) => setTitle(e.target.value);
-  const selectinputChangeHandler = (id) => setColor(id);
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    const newEvents = calevents;
-    newEvents.push({
-      title,
-      start,
-      end,
-      color,
-    });
-    setOpen(false);
-    e.target.reset();
-    setCalEvents(newEvents);
-    setTitle('');
-    setStart(new Date());
-    setEnd(new Date());
+  const updateEventInBackend = async (id, updatedEvent) => {
+    try {
+      const updated = await updateEvent(id, updatedEvent);
+      setCalEvents((prevEvents) =>
+        prevEvents.map((event) => (event.title === updated.title ? updated : event))
+      );
+    } catch (error) {
+      console.error('Error updating event:', error);
+    }
   };
-  const deleteHandler = (event) => {
-    const updatecalEvents = calevents.filter((ind) => ind.title !== event.title);
-    setCalEvents(updatecalEvents);
+
+  const deleteEventFromBackend = async (id) => {
+    try {
+      await deleteEvent(id);
+      setCalEvents((prevEvents) => prevEvents.filter((event) => event._id !== id));
+      handleClose();
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
   };
+
   const handleClose = () => {
     setOpen(false);
     setTitle('');
@@ -127,61 +115,87 @@ const BigCalendar = () => {
     setUpdate(null);
   };
 
+  const handleStartChange = (newValue) => {
+    setStart(newValue);
+  };
+
+  const handleEndChange = (newValue) => {
+    setEnd(newValue);
+  };
+  console.log('Rendering BigCalendar component...', start, end);
+
+  const inputChangeHandler = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const selectInputChangeHandler = (id) => {
+    setColor(id);
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const newEvent = { title, start, end, color };
+    try {
+      const createdEvent = await createEvent(newEvent);
+      setCalEvents([...calevents, createdEvent]);
+      setOpen(false);
+      setTitle('');
+      setStart(new Date());
+      setEnd(new Date());
+    } catch (error) {
+      console.error('Error creating event:', error);
+    }
+  };
+
   const eventColors = (event) => {
     if (event.color) {
       return { className: `event-${event.color}` };
     }
-    return { className: `event-default` };
-  };
-
-  const handleStartChange = (newValue) => {
-    setStart(newValue);
-  };
-  const handleEndChange = (newValue) => {
-    setEnd(newValue);
+    return { className: 'event-default' };
   };
 
   return (
-    <PageContainer title="Calendar ui" description="this is Calendar page">
+    <PageContainer title="Calendar UI" description="This is the Calendar page">
       <Breadcrumb title="Calendar" subtitle="App" />
       <BlankCard key={slot} variant="outlined">
-        {/* ------------------------------------------- */}
-        {/* Calendar */}
-        {/* ------------------------------------------- */}
         <CardContent>
-          <Calendar
+          <DnDCalendar
             selectable
             events={calevents}
-            defaultView="month"
-            scrollToTime={new Date(1970, 1, 1, 6)}
+            defaultView="week"
+            scrollToTime={new Date(1970, 1, 1, 8)}
             defaultDate={new Date()}
             localizer={localizer}
-            style={{ height: 'calc(100vh - 350px' }}
+            style={{ height: 'calc(100vh - 350px)' }}
             onSelectEvent={(event) => editEvent(event)}
             onSelectSlot={(slotInfo) => addNewEventAlert(slotInfo)}
             eventPropGetter={(event) => eventColors(event)}
+            min={new Date(1970, 1, 1, 8)}
+            max={new Date(1970, 1, 1, 18)}
+            resizable
+            onEventResize={(data) =>
+              updateEventInBackend(data.event._id, {
+                start: data.start,
+                end: data.end,
+              })
+            }
+            onEventDrop={(data) =>
+              updateEventInBackend(data.event._id, {
+                start: data.start,
+                end: data.end,
+              })
+            }
           />
         </CardContent>
       </BlankCard>
-      {/* ------------------------------------------- */}
-      {/* Add Calendar Event Dialog */}
-      {/* ------------------------------------------- */}
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
-        <form onSubmit={update ? updateEvent : submitHandler}>
+        <form onSubmit={submitHandler}>
           <DialogContent>
-            {/* ------------------------------------------- */}
-            {/* Add Edit title */}
-            {/* ------------------------------------------- */}
             <Typography variant="h4" sx={{ mb: 2 }}>
               {update ? 'Update Event' : 'Add Event'}
             </Typography>
-            <Typography mb={3} variant="subtitle2">
-              {!update
-                ? 'To add Event kindly fillup the title and choose the event color and press the add button'
-                : 'To Edit/Update Event kindly change the title and choose the event color and press the update button'}
-            </Typography>
             <TextField
-              id="Event Title"
+              id="event-title"
               placeholder="Enter Event Title"
               variant="outlined"
               fullWidth
@@ -190,9 +204,6 @@ const BigCalendar = () => {
               sx={{ mb: 3 }}
               onChange={inputChangeHandler}
             />
-            {/* ------------------------------------------- */}
-            {/* Selection of Start and end date */}
-            {/* ------------------------------------------- */}
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <MobileDatePicker
                 label="Start Date"
@@ -217,60 +228,32 @@ const BigCalendar = () => {
                 )}
               />
             </LocalizationProvider>
-
-            {/* ------------------------------------------- */}
-            {/* Calendar Event Color*/}
-            {/* ------------------------------------------- */}
             <Typography variant="h6" fontWeight={600} my={2}>
               Select Event Color
             </Typography>
-            {/* ------------------------------------------- */}
-            {/* colors for event */}
-            {/* ------------------------------------------- */}
-            {ColorVariation.map((mcolor) => {
-              return (
-                <Fab
-                  color="primary"
-                  style={{ backgroundColor: mcolor.eColor }}
-                  sx={{
-                    marginRight: '3px',
-                    transition: '0.1s ease-in',
-                    scale: mcolor.value === color ? '0.9' : '0.7',
-                  }}
-                  size="small"
-                  key={mcolor.id}
-                  onClick={() => selectinputChangeHandler(mcolor.value)}
-                >
-                  {mcolor.value === color ? <IconCheck width={16} /> : ''}
-                </Fab>
-              );
-            })}
-          </DialogContent>
-          {/* ------------------------------------------- */}
-          {/* Action for dialog */}
-          {/* ------------------------------------------- */}
-          <DialogActions sx={{ p: 3 }}>
-            <Button onClick={handleClose}>Cancel</Button>
-
-            {update ? (
-              <Button
-                type="submit"
-                color="error"
-                variant="contained"
-                onClick={() => deleteHandler(update)}
+            {ColorVariation.map((mcolor) => (
+              <Fab
+                color="primary"
+                style={{ backgroundColor: mcolor.eColor }}
+                sx={{
+                  marginRight: '3px',
+                  transition: '0.1s ease-in',
+                  scale: mcolor.value === color ? '0.9' : '0.7',
+                }}
+                size="small"
+                key={mcolor.id}
+                onClick={() => selectInputChangeHandler(mcolor.value)}
               >
-                Delete
-              </Button>
-            ) : (
-              ''
-            )}
-            <Button type="submit" disabled={!title} variant="contained">
+                {mcolor.value === color ? <IconCheck /> : ''}
+              </Fab>
+            ))}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit" variant="contained" onClick={submitHandler}>
               {update ? 'Update Event' : 'Add Event'}
             </Button>
           </DialogActions>
-          {/* ------------------------------------------- */}
-          {/* End Calendar */}
-          {/* ------------------------------------------- */}
         </form>
       </Dialog>
     </PageContainer>

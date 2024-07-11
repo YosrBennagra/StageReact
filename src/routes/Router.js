@@ -7,6 +7,7 @@ import DashboardRequests from 'src/views/dashboards/requests/DashboardRequests';
 
 
 
+
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
@@ -127,7 +128,9 @@ const DashboardGroup = Loadable(lazy(() => import('../views/dashboards/groups/Da
 const DashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/DashboardAssignments')));
 const StudentDashboardAssignments = Loadable(lazy(() => import('../views/dashboards/assignements/StudentDashboardAssignments')));
 const DashboardInstitutions = Loadable(lazy(() => import('../views/dashboards/institutions/DashboardInstitutions')));
+const DashboardSalary = Loadable(lazy(() => import('../views/dashboards/salaries/DashboardSalary')));
 const MySchedule = Loadable(lazy(() => import('../views/dashboards/MySchedule/MySchedule')));
+const MyResults = Loadable(lazy(() => import('../views/dashboards/Results/MyResults')));
 const MyInstitution = Loadable(lazy(() => import('../views/dashboards/institutions/MyInstitution')));
 
 // assignments
@@ -147,9 +150,11 @@ const Router = [
       { path: '/dashboard/students', exact: true, element: <DashboardStudent /> },
       { path: '/dashboard/groups', exact: true, element: <DashboardGroup /> },
       { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },
+      { path: '/dashboard/salaries', exact: true, element: <DashboardSalary /> },
       { path: '/student/dashboard/assignments', element: <StudentDashboardAssignments /> },
       { path: '/dashboard/institutions', exact: true, element: <DashboardInstitutions /> },
       { path: '/edit/institution/:InstitutionId', element: <MyInstitution /> },
+      { path: '/MyResults', element: <MyResults /> },
       { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
       { path: '/create/assignment/:id', element: <CreateAssignment /> },
       { path: '/pass/assignment/:id', element: <StudentAssignment /> },

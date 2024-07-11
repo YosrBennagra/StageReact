@@ -13,7 +13,7 @@ export const fetchGroupMembers = createAsyncThunk('groups/fetchGroupMembers', as
 
 export const fetchGroupLessons = createAsyncThunk('groups/fetchGroupLessons', async (groupId) => {
   const response = await axios.get(`http://localhost:3001/lessons/bygroup/${groupId}`);
-  return response.data; 
+  return response.data;
 });
 
 export const createLesson = createAsyncThunk('groups/createLesson', async (lessonData) => {
@@ -32,7 +32,7 @@ const groupsSlice = createSlice({
     groups: [],
     selectedGroup: null,
     members: [],
-    lessons: [], 
+    lessons: [],
     status: 'idle',
     error: null,
   },
@@ -40,10 +40,10 @@ const groupsSlice = createSlice({
     selectGroup(state, action) {
       state.selectedGroup = action.payload;
       state.members = [];
-      state.lessons = []; 
+      state.lessons = [];
     },
     addLesson(state, action) {
-      state.lessons.push(action.payload); 
+      state.lessons.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -75,7 +75,7 @@ const groupsSlice = createSlice({
       })
       .addCase(fetchGroupLessons.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.lessons = action.payload; 
+        state.lessons = action.payload;
       })
       .addCase(fetchGroupLessons.rejected, (state, action) => {
         state.status = 'failed';

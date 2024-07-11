@@ -92,6 +92,20 @@ export default function StudentAssignment() {
     };
 
     const handleClose = async () => {
+        setOpen(false);
+    };
+    const handleOk = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3001/results/student/${user.userId}/calculate`, {
+            });
+            if (response) {
+                navigate('/MyResults')
+            } else {
+                console.error('Failed to add the answer');
+            }
+        } catch (error) {
+            console.error('Error adding answer:', error);
+        }
         try {
             const response = await fetch(`http://localhost:3001/assignments/${id}/userPassed/${user.userId}`, {
                 method: 'PUT',
@@ -109,7 +123,8 @@ export default function StudentAssignment() {
             console.error('Error adding answer:', error);
         }
         setOpen(false);
-    };
+    }
+
     /* Confirm Dialog E */
     return (
         <>
@@ -128,10 +143,10 @@ export default function StudentAssignment() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Card
-                            sx={{ padding: 0,backgroundColor: "#b41a1a00" }}
+                            sx={{ padding: 0, backgroundColor: "#b41a1a00" }}
                             elevation={customizer.isCardShadow ? 9 : 0}
                             variant={!customizer.isCardShadow ? 'outlined' : undefined}>
-                            <CardHeader                             title={
+                            <CardHeader title={
                                 <Box>
                                     <Stack direction="row">
                                         <Typography fontWeight={600} variant="h4" mb={0}>
@@ -141,7 +156,7 @@ export default function StudentAssignment() {
                                     </Stack>
                                 </Box>}
                             />
-                            <Divider sx={{borderColor:'#601919'}}/>
+                            <Divider sx={{ borderColor: '#601919' }} />
                             <CardContent>
                                 <Typography color="textSecondary" variant="subtitle2" mb={2}>
                                     {isScheduled ?
@@ -214,7 +229,7 @@ export default function StudentAssignment() {
                     <Button color="error" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} autoFocus color='success'>
+                    <Button onClick={handleOk} autoFocus color='success'>
                         Submit
                     </Button>
                 </DialogActions>

@@ -79,6 +79,12 @@ const profile = [
     subtitle: 'Your calendar',
     icon: icon3,
   },
+  {
+    href: '/MyResults',
+    title: 'My Results',
+    subtitle: 'Results',
+    icon: icon3,
+  },
 ];
 
 // apps dropdown

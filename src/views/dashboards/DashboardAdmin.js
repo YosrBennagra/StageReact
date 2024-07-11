@@ -67,6 +67,22 @@ const topcards = [
     bgcolor: 'secondary',
     roles: ['admin', 'teacher']
   },
+  {
+    href: '/dashboard/classes',
+    icon: iconGroup,
+    title: 'Classes',
+    digits: '67',
+    bgcolor: 'secondary',
+    roles: ['admin']
+  },
+  {
+    href: '/dashboard/salaries',
+    icon: iconGroup,
+    title: 'Salaries',
+    digits: '67',
+    bgcolor: 'secondary',
+    roles: ['admin']
+  },
 ];
 
 export default function DashboardAdmin() {
