@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { List, ListItem, ListItemText, Typography, Divider } from '@mui/material';
 import { createLesson, fetchGroupLessons } from 'src/store/apps/groups/groupsSlice';
 import LessonCreate from './LessonCreate';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const LessonList = ({ showrightSidebar }) => {
   const dispatch = useDispatch();
@@ -10,6 +11,7 @@ const LessonList = ({ showrightSidebar }) => {
   const lessonStatus = useSelector((state) => state.groups.status);
   const lessonError = useSelector((state) => state.groups.error);
   const currentSelectedGroup = useSelector((state) => state.groups.selectedGroup);
+  const user = useAuthUser();
 
   useEffect(() => {
     if (currentSelectedGroup) {
@@ -19,7 +21,7 @@ const LessonList = ({ showrightSidebar }) => {
 
   const handleAddLesson = (newLesson) => {
     dispatch(createLesson({ ...newLesson, group: currentSelectedGroup })).then(() => {
-      dispatch(fetchGroupLessons(currentSelectedGroup));  
+      dispatch(fetchGroupLessons(currentSelectedGroup));
     });
   };
 
@@ -33,7 +35,9 @@ const LessonList = ({ showrightSidebar }) => {
 
   return (
     <div>
-      <LessonCreate onAddLesson={handleAddLesson} />
+      {user.role !== 'admin' && user.role !== 'responsable' ? null :
+        <LessonCreate onAddLesson={handleAddLesson} />
+      }
       {lessons.length === 0 ? (
         <Typography>No lessons found.</Typography>
       ) : (

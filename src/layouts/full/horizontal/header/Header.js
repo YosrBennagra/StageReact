@@ -68,9 +68,8 @@ const Header = () => {
         <Stack spacing={1} direction="row" alignItems="center">
           <Language />
           {/* ------------------------------------------- */}
-          {/* Ecommerce Dropdown */}
+          {/* Ecommerce Dropdown */} 
           {/* ------------------------------------------- */}
-          <Cart />
           {/* ------------------------------------------- */}
           {/* End Ecommerce Dropdown */}
           {/* ------------------------------------------- */}

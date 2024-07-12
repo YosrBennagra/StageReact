@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import axios from 'axios';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const timeSlots = ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00'];
@@ -35,11 +36,17 @@ export default function MySchedule() {
     const [groupsLoading, setGroupsLoading] = useState(true);
     const [loading, setLoading] = useState(true);
     const [totalHours, setTotalHours] = useState(0);
+    const user = useAuthUser()
 
     useEffect(() => {
         const fetchClasses = async () => {
             try {
                 const response = await axios.get('http://localhost:3001/classrooms');
+                if (user.role === 'student') {
+                    const responseUser = await axios.get(`http://localhost:3001/userinfos/byuser/${user.userId}`);
+                    setClasse(responseUser.data.classroom);
+                    console.log("🚀 ~ file: MySchedule.js:48 ~ fetchClasses ~ responseUser:", responseUser.data.classroom);
+                }
                 setClasses(response.data);
                 setLoading(false);
             } catch (error) {
@@ -55,7 +62,7 @@ export default function MySchedule() {
             let hours = 0;
             Object.keys(schedule).forEach(slot => {
                 if (schedule[slot]) {
-                    hours += 1; 
+                    hours += 1;
                 }
             });
             setTotalHours(hours);
@@ -147,37 +154,43 @@ export default function MySchedule() {
         const group = groups.find(group => group._id === id);
         return group ? group.name : '';
     };
-
     return (
         <div style={{ padding: '20px' }}>
-            <Typography variant="h4" gutterBottom>
-                My Schedule
-            </Typography>
+            {user.role === 'student' ? (null) :
+                (
+                    <Typography variant="h4" gutterBottom>
+                        My Schedule
+                    </Typography>
+                )}
+
             <Grid container spacing={3} style={{ marginBottom: '20px' }}>
                 <Grid item xs={12} sm={6} md={4}>
-                    <Select
-                        labelId="select-classe-label"
-                        id="select-classe"
-                        value={classe}
-                        onChange={handleClassChange}
-                        label="Classes"
-                        fullWidth
-                        variant="outlined"
-                        disabled={loading || classes.length === 0}
-                    >
-                        {loading ? (
-                            <MenuItem disabled>
-                                <CircularProgress size={24} />
-                                Loading classes...
-                            </MenuItem>
-                        ) : (
-                            classes.map((classe) => (
-                                <MenuItem key={classe._id} value={classe._id}>
-                                    {classe.name}
+                    {user.role === 'student' ? (null) : (
+                        <Select
+                            labelId="select-classe-label"
+                            id="select-classe"
+                            value={classe}
+                            onChange={handleClassChange}
+                            label="Classes"
+                            fullWidth
+                            variant="outlined"
+                            disabled={loading || classes.length === 0}
+                        >
+                            {loading ? (
+                                <MenuItem disabled>
+                                    <CircularProgress size={24} />
+                                    Loading classes...
                                 </MenuItem>
-                            ))
-                        )}
-                    </Select>
+                            ) : (
+                                classes.map((classe) => (
+                                    <MenuItem key={classe._id} value={classe._id}>
+                                        {classe.name}
+                                    </MenuItem>
+                                ))
+                            )}
+                        </Select>
+                    )}
+
                 </Grid>
             </Grid>
             <TableContainer component={Paper}>
@@ -201,21 +214,26 @@ export default function MySchedule() {
                                                 <Typography variant="body2" style={{ flexGrow: 1 }}>
                                                     {getGroupNameById(schedule[`${day}-${time}`])}
                                                 </Typography>
-                                                <IconButton onClick={() => handleClickOpen(day, time)}>
-                                                    <Edit />
-                                                </IconButton>
-                                                <IconButton onClick={() => handleRemove(day, time)}>
-                                                    <Delete />
-                                                </IconButton>
+                                                {user.role === 'student' ? (null) : (
+                                                    <>
+                                                        <IconButton onClick={() => handleClickOpen(day, time)}>
+                                                            <Edit />
+                                                        </IconButton>
+                                                        <IconButton onClick={() => handleRemove(day, time)}>
+                                                            <Delete />
+                                                        </IconButton>
+                                                    </>
+                                                )}
                                             </div>
                                         ) : (
-                                            <Button
-                                                variant="outlined"
-                                                onClick={() => handleClickOpen(day, time)}
-                                                startIcon={<Add />}
-                                            >
-                                                Add
-                                            </Button>
+                                            user.role === 'student' ? (null) : (
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={() => handleClickOpen(day, time)}
+                                                    startIcon={<Add />}
+                                                >
+                                                    Add
+                                                </Button>)
                                         )}
                                     </TableCell>
                                 ))}
@@ -251,14 +269,16 @@ export default function MySchedule() {
                         )}
                     </Select>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleSave} color="primary">
-                        Save
-                    </Button>
-                </DialogActions>
+                {user.role === 'student' ? (null) : (
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSave} color="primary">
+                            Save
+                        </Button>
+                    </DialogActions>
+                )}
             </Dialog>
         </div>
     );

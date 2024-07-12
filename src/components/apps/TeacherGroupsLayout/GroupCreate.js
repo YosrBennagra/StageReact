@@ -28,7 +28,8 @@ const GroupCreate = ({ onAddGroup }) => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${user.institution}`);
+        const responseUser = await axios.get(`http://localhost:3001/userinfos/byuser/${user.userId}`);
+        const response = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${responseUser.data.institution}`);
         setSubjects(response.data);
         setLoading(false);
       } catch (error) {
@@ -130,7 +131,7 @@ const GroupCreate = ({ onAddGroup }) => {
                 <MenuItem disabled>Loading subjects...</MenuItem>
               ) : (
                 subjects.map((subject) => (
-                  <MenuItem key={subject._id} value={subject.name}>
+                  <MenuItem key={subject._id} value={subject._id}>
                     {subject.name}
                   </MenuItem>
                 ))

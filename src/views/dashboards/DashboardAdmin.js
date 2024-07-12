@@ -65,7 +65,7 @@ const topcards = [
     title: 'Groups',
     digits: '67',
     bgcolor: 'secondary',
-    roles: ['admin', 'teacher']
+    roles: ['admin', 'teacher','student']
   },
   {
     href: '/dashboard/classes',

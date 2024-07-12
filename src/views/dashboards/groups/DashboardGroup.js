@@ -1,6 +1,7 @@
 import { TabContext, TabPanel } from '@mui/lab';
 import {
     Avatar,
+    Badge,
     Box,
     Button,
     Chip,
@@ -25,7 +26,7 @@ import GroupsLeftLayout from '../../../components/apps/TeacherGroupsLayout/Group
 import LessonList from '../../../components/apps/TeacherGroupsLayout/LessonList';
 import PageContainer from '../../../components/container/PageContainer';
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
-import { fetchGroupLessons, fetchGroupMembers, selectGroup } from '../../../store/apps/groups/groupsSlice'; // Update with appropriate actions
+import { fetchGroupLessons, fetchGroupMembers } from '../../../store/apps/groups/groupsSlice';
 
 const drawerWidth = 400;
 const secdrawerWidth = 400;
@@ -42,15 +43,18 @@ const DashboardGroup = () => {
     const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
     const dispatch = useDispatch();
     const { selectedLesson, members: globalMembers } = useSelector((state) => state.groups);
-
+    const user = useAuthUser();
+    console.log("🚀 ~ file: DashboardGroup.js:47 ~ DashboardGroup ~ user:", user);
     const [groupMembers, setGroupMembers] = useState([]);
     const [value, setValue] = useState('1');
     const currentSelectedGroup = useSelector((state) => state.groups.selectedGroup);
     const currentLoggedInUser = useAuthUser();
 
     useEffect(() => {
-        dispatch(fetchGroupMembers(currentSelectedGroup));
-        dispatch(fetchGroupLessons());
+        if (currentSelectedGroup != null) {
+            dispatch(fetchGroupMembers(currentSelectedGroup));
+            dispatch(fetchGroupLessons());
+        }
     }, [dispatch]);
 
     useEffect(() => {
@@ -125,7 +129,7 @@ const DashboardGroup = () => {
                             key="1"
                             value="1"
                         >
-                            <Divider sx={{ mt: 1 }} />
+                            <Divider sx={{ mt: 0 }} />
                             <LessonList showrightSidebar={() => setRightSidebarOpen(true)} />
                         </TabPanel>
                         <TabPanel
@@ -139,32 +143,47 @@ const DashboardGroup = () => {
                                 alignItems: 'center',
                             }}
                         >
-                            <StudentSearch onClick={() => setLeftSidebarOpen(true)} />
-                            <Divider sx={{ my: 1 }} />
+                            {user.role !== 'admin' && user.role !== 'responsable' ? null :
+                                <StudentSearch onClick={() => setLeftSidebarOpen(true)} />
+                            }
+                            <Divider sx={{ my: 0 }} />
                             {groupMembers.length > 0 ? (
-                                groupMembers.map((user) => (
+                                groupMembers.map((userL) => (
                                     <Tooltip
                                         TransitionComponent={Fade}
                                         TransitionProps={{ timeout: 600 }}
                                         title={
                                             <div>
-                                                <div>Email: {user.email}</div>
-                                                <div>Username: {user.username}</div>
+                                                <div>Email: {userL.email}</div>
+                                                <div>Username: {userL.username}</div>
                                             </div>
                                         }
-                                        key={user._id}
+                                        key={userL._id}
                                     >
-                                        <Chip
-                                            sx={{
-                                                m: 1,
-                                                textTransform: 'capitalize'
-                                            }}
-                                            key={user._id}
-                                            avatar={<Avatar alt={user.email} />}
-                                            label={`${user.firstname} ${user.lastname}`}
-                                            color={user._id === currentLoggedInUser.userId ? 'success' : 'primary'}
-                                            onDelete={() => handleDeleteUserFromGroup(user._id)}
-                                        />
+                                        {user.role !== 'admin' && user.role !== 'responsable' ?
+                                            <Chip
+                                                sx={{
+                                                    m: 1,
+                                                    textTransform: 'capitalize'
+                                                }}
+                                                key={userL._id}
+                                                avatar={<Avatar alt={userL.email} />}
+                                                label={`${userL.firstname} ${userL.lastname}`}
+                                                color={userL._id === currentLoggedInUser.userId ? 'success' : 'primary'}
+                                            />
+                                            :
+                                            <Chip
+                                                sx={{
+                                                    m: 1,
+                                                    textTransform: 'capitalize'
+                                                }}
+                                                key={userL._id}
+                                                avatar={<Avatar alt={userL.email} />}
+                                                label={`${userL.firstname} ${userL.lastname}`}
+                                                color={userL._id === currentLoggedInUser.userId ? 'success' : 'primary'}
+                                                onDelete={() => handleDeleteUserFromGroup(userL._id)}
+                                            />
+                                        }
                                     </Tooltip>
                                 ))
                             ) : (

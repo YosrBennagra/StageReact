@@ -19,7 +19,7 @@ import {
 
 import GroupCreate from './GroupCreate';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import { fetchGroupMembers, fetchGroups, selectGroup } from 'src/store/apps/groups/groupsSlice';
+import { fetchGroupMembers, fetchGroups, fetchGroupsbyUser, selectGroup } from 'src/store/apps/groups/groupsSlice';
 import axios from 'axios';
 import GroupEdit from './GroupEdit';
 
@@ -34,7 +34,12 @@ const GroupsLeftLayout = () => {
   const user = useAuthUser()
 
   useEffect(() => {
-    dispatch(fetchGroups()); 
+    if (user.role === 'admin') {
+      dispatch(fetchGroups());
+    }
+    else if (user.role === 'student') {
+      dispatch(fetchGroupsbyUser(user.userId));
+    }
   }, [dispatch]);
 
   useEffect(() => {
@@ -97,11 +102,16 @@ const GroupsLeftLayout = () => {
                 <IconFolder />
               </ListItemIcon >
               <ListItemText sx={{ textTransform: 'capitalize' }} >{group.name}</ListItemText>
-              <GroupEdit group={group} onUpdateGroup={handleUpdateGroup} />
-              <Box sx={{ width: '1px', height: '24px', backgroundColor: 'grey', mx: 1 }} />
-              <IconButton onClick={() => handleDeleteGroup(group._id)}>
-                <IconTrash />
-              </IconButton>
+              {user.role !== 'admin' && user.role !== 'responsable' ? null :
+                <>
+                  <GroupEdit group={group} onUpdateGroup={handleUpdateGroup} />
+
+                  <Box sx={{ width: '1px', height: '24px', backgroundColor: 'grey', mx: 1 }} />
+                  <IconButton onClick={() => handleDeleteGroup(group._id)}>
+                    <IconTrash />
+                  </IconButton>
+                </>
+              }
             </ListItemButton>
           ))}
           <Divider sx={{ my: 1 }} />

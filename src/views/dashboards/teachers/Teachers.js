@@ -56,7 +56,7 @@ export default function Teachers() {
 
   const handleSearchChange = (event) => {
     setSearch(event.target.value);
-    setPage(0); 
+    setPage(0);
   };
 
   return (
@@ -91,12 +91,6 @@ export default function Teachers() {
                   <TableCell>
                     <Typography variant="h6">Full Name</Typography>
                   </TableCell>
-                  <TableCell>
-                    <Typography variant="h6">Groups</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="h6">Status</Typography>
-                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -120,41 +114,7 @@ export default function Teachers() {
                         {student.firstname} {student.lastname}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Stack direction="row">
-                        <AvatarGroup max={4}>
-                        </AvatarGroup>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        sx={{
-                          bgcolor:
-                            student.status === 'CONFIRMED'
-                              ? (theme) => theme.palette.success.light
-                              : student.status === 'NOT CONFIRMED'
-                                ? (theme) => theme.palette.error.light
-                                : student.status === 'Completed'
-                                  ? (theme) => theme.palette.primary.light
-                                  : student.status === 'Cancel'
-                                    ? (theme) => theme.palette.error.light
-                                    : (theme) => theme.palette.secondary.light,
-                          color:
-                            student.status === 'CONFIRMED'
-                              ? (theme) => theme.palette.success.main
-                              : student.status === 'NOT CONFIRMED'
-                                ? (theme) => theme.palette.error.main
-                                : student.status === 'Completed'
-                                  ? (theme) => theme.palette.primary.main
-                                  : student.status === 'Cancel'
-                                    ? (theme) => theme.palette.error.main
-                                    : (theme) => theme.palette.secondary.main,
-                          borderRadius: "8px"
-                        }}
-                        size="small"
-                        label={student.status}
-                      />
-                    </TableCell>
+
                   </TableRow>
                 ))}
               </TableBody>

@@ -1,8 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 export const fetchGroups = createAsyncThunk('groups/fetchGroups', async () => {
   const response = await axios.get('http://localhost:3001/groups');
+  return response.data;
+});
+
+export const fetchGroupsbyUser = createAsyncThunk('groups/fetchGroupsbyUser', async (userId) => {
+  const response = await axios.get(`http://localhost:3001/groups/user/${userId}`);
   return response.data;
 });
 
@@ -56,6 +62,17 @@ const groupsSlice = createSlice({
         state.groups = action.payload;
       })
       .addCase(fetchGroups.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(fetchGroupsbyUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchGroupsbyUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.groups = action.payload;
+      })
+      .addCase(fetchGroupsbyUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })

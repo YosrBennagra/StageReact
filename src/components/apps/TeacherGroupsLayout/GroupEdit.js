@@ -39,7 +39,8 @@ const GroupEdit = ({ group, onUpdateGroup }) => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${user.institution}`);
+        const responseUser = await axios.get(`http://localhost:3001/userinfos/byuser/${user.userId}`);
+        const response = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${responseUser.data.institution}`);
         setSubjects(response.data);
         setLoading(false);
       } catch (error) {

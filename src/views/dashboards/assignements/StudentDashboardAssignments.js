@@ -22,8 +22,6 @@ import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb';
 import PageContainer from 'src/components/container/PageContainer';
 import { useNavigate } from 'react-router';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
-import { format } from 'date-fns';
-
 const BCrumb = [
     {
         to: '/',
@@ -68,9 +66,6 @@ export default function StudentDashboardAssignments() {
     const handleGoToAssignment = (id) => {
         navigate(`/pass/assignment/${id}`);
     };
-
-
-
 
     return (
         <PageContainer title="Assignments" description="This is the Assignments page">
@@ -117,10 +112,14 @@ export default function StudentDashboardAssignments() {
                                     <TableCell>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography variant="h6"></Typography>
+                                        <Typography variant="h6">
+
+                                        </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography variant="h6"></Typography>
+                                        <Typography variant="h6">
+
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>

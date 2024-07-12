@@ -11,11 +11,11 @@ import {
   Button,
   Chip,
 } from '@mui/material';
-import * as dropdownData from './data';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 
-import { IconBellRinging } from '@tabler/icons';
+import { IconBellRinging, IconPlus } from '@tabler/icons';
 import { Stack } from '@mui/system';
+import AuthRegister from 'src/views/authentication/authForms/AuthRegister';
 
 const Notifications = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -44,7 +44,7 @@ const Notifications = () => {
         onClick={handleClick2}
       >
         <Badge variant="dot" color="primary">
-          <IconBellRinging size="21" stroke="1.5" />
+          <IconPlus size="21" stroke="1.5" />
         </Badge>
       </IconButton>
       {/* ------------------------------------------- */}
@@ -65,55 +65,11 @@ const Notifications = () => {
         }}
       >
         <Stack direction="row" py={2} px={4} justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Notifications</Typography>
-          <Chip label="5 new" color="primary" size="small" />
+          <Typography variant="h6">Create An Account</Typography>
         </Stack>
         <Scrollbar sx={{ height: '385px' }}>
-          {dropdownData.notifications.map((notification, index) => (
-            <Box key={index}>
-              <MenuItem sx={{ py: 2, px: 4 }}>
-                <Stack direction="row" spacing={2}>
-                  <Avatar
-                    src={notification.avatar}
-                    alt={notification.avatar}
-                    sx={{
-                      width: 48,
-                      height: 48,
-                    }}
-                  />
-                  <Box>
-                    <Typography
-                      variant="subtitle2"
-                      color="textPrimary"
-                      fontWeight={600}
-                      noWrap
-                      sx={{
-                        width: '240px',
-                      }}
-                    >
-                      {notification.title}
-                    </Typography>
-                    <Typography
-                      color="textSecondary"
-                      variant="subtitle2"
-                      sx={{
-                        width: '240px',
-                      }}
-                      noWrap
-                    >
-                      {notification.subtitle}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </MenuItem>
-            </Box>
-          ))}
+          <AuthRegister/>
         </Scrollbar>
-        <Box p={3} pb={1}>
-          <Button to="/apps/email" variant="outlined" component={Link} color="primary" fullWidth>
-            See all Notifications
-          </Button>
-        </Box>
       </Menu>
     </Box>
   );
