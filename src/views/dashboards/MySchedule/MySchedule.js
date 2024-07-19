@@ -18,25 +18,26 @@ import {
     Typography,
     CircularProgress,
     IconButton,
+    TextField,
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import axios from 'axios';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const timeSlots = ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00'];
+
 export default function MySchedule() {
-    const [schedule, setSchedule] = useState({});
+    const [schedule, setSchedule] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentSlot, setCurrentSlot] = useState({ day: '', time: '' });
     const [subject, setSubject] = useState('');
+    const [subjects, setSubjects] = useState([]);
     const [classes, setClasses] = useState([]);
     const [classe, setClasse] = useState('');
-    const [groups, setGroups] = useState([]);
-    const [groupsLoading, setGroupsLoading] = useState(true);
     const [loading, setLoading] = useState(true);
-    const [totalHours, setTotalHours] = useState(0);
-    const user = useAuthUser()
+    const [timeSlots, setTimeSlots] = useState([]);
+    const [newTimeSlot, setNewTimeSlot] = useState('');
+    const user = useAuthUser();
 
     useEffect(() => {
         const fetchClasses = async () => {
@@ -45,10 +46,10 @@ export default function MySchedule() {
                 if (user.role === 'student') {
                     const responseUser = await axios.get(`http://localhost:3001/userinfos/byuser/${user.userId}`);
                     setClasse(responseUser.data.classroom);
-                    console.log("🚀 ~ file: MySchedule.js:48 ~ fetchClasses ~ responseUser:", responseUser.data.classroom);
                 }
                 setClasses(response.data);
                 setLoading(false);
+                console.log('Classes fetched:', response.data);
             } catch (error) {
                 console.error('Error fetching classes:', error);
                 setLoading(false);
@@ -56,62 +57,44 @@ export default function MySchedule() {
         };
 
         fetchClasses();
-    }, []);
-    useEffect(() => {
-        const calculateTotalHours = () => {
-            let hours = 0;
-            Object.keys(schedule).forEach(slot => {
-                if (schedule[slot]) {
-                    hours += 1;
-                }
-            });
-            setTotalHours(hours);
-        };
+    }, [user.userId, user.role]);
 
-        calculateTotalHours();
-    }, [schedule]);
     useEffect(() => {
-        const fetchGroupsAndSchedule = async () => {
-            if (classe) {
+        if (classe) {
+            const fetchSubjectsAndSchedule = async () => {
                 try {
-                    setGroupsLoading(true);
-                    const [groupsResponse, scheduleResponse] = await Promise.all([
-                        axios.get(`http://localhost:3001/classrooms/${classe}`),
-                        axios.get(`http://localhost:3001/schedules/${classe}`)
+                    const responseUser = await axios.get(`http://localhost:3001/userinfos/byuser/${user.userId}`);
+                    const [subjectsResponse, scheduleResponse, timeSlotsResponse] = await Promise.all([
+                        axios.get(`http://localhost:3001/subjects/getsubjectsBy/${responseUser.data.institution}`),
+                        axios.get(`http://localhost:3001/schedules/${classe}`),
+                        axios.get(`http://localhost:3001/timeslots/${classe}`),
                     ]);
-
-                    if (groupsResponse.data.groups && Array.isArray(groupsResponse.data.groups)) {
-                        setGroups(groupsResponse.data.groups);
-                    } else {
-                        console.error('Invalid groups data format:', groupsResponse.data);
-                        setGroups([]);
-                    }
-
-                    if (scheduleResponse.data.schedule && typeof scheduleResponse.data.schedule === 'object') {
-                        setSchedule(scheduleResponse.data.schedule);
-                    } else {
-                        console.error('Invalid schedule data format:', scheduleResponse.data);
-                        setSchedule({});
-                    }
-
-                    setGroupsLoading(false);
+                    setSubjects(subjectsResponse.data);
+                    setSchedule(Array.isArray(scheduleResponse.data) ? scheduleResponse.data : []);
+                    setTimeSlots(timeSlotsResponse.data);
+                    console.log('Subjects fetched:', subjectsResponse.data);
+                    console.log('Schedule fetched:', scheduleResponse.data);
+                    console.log('Time slots fetched:', timeSlotsResponse.data);
                 } catch (error) {
-                    setGroupsLoading(false);
-                    console.error('Error fetching groups and schedule:', error);
+                    console.error('Error fetching subjects, schedule, and time slots:', error);
                 }
-            } else {
-                setGroups([]);
-                setSchedule({});
-                setGroupsLoading(false);
-            }
-        };
+            };
 
-        fetchGroupsAndSchedule();
-    }, [classe]);
+            fetchSubjectsAndSchedule();
+        }
+    }, [classe, user.userId]);
+
+    useEffect(() => {
+        // Load schedule from localStorage on component mount
+        const savedSchedule = JSON.parse(localStorage.getItem('schedule'));
+        if (savedSchedule) {
+            setSchedule(savedSchedule);
+        }
+    }, []);
 
     const handleClickOpen = (day, time) => {
         setCurrentSlot({ day, time });
-        setSubject(schedule[`${day}-${time}`] || '');
+        setSubject('');
         setOpen(true);
     };
 
@@ -119,53 +102,95 @@ export default function MySchedule() {
         setOpen(false);
     };
 
-    const handleSave = () => {
-        const newSchedule = { ...schedule, [`${currentSlot.day}-${currentSlot.time}`]: subject };
+    const handleSave = async () => {
+        const newEntry = { ...currentSlot, subject };
+        const newSchedule = Array.isArray(schedule) ? [...schedule, newEntry] : [newEntry];
         setSchedule(newSchedule);
-        saveToDatabase(newSchedule);
+        saveToLocalStorage(newSchedule); // Save updated schedule to localStorage
         setOpen(false);
-    };
 
-    const handleRemove = (day, time) => {
-        const newSchedule = { ...schedule };
-        delete newSchedule[`${day}-${time}`];
-        setSchedule(newSchedule);
-        saveToDatabase(newSchedule);
-    };
-
-    const saveToDatabase = async (schedule) => {
         try {
-            await axios.post(`http://localhost:3001/schedules/${classe}`, { schedule });
-            console.log('Saved to database:', schedule);
+            const response = await axios.post(`http://localhost:3001/schedules/${classe}`, newSchedule);
+            setSchedule(response.data); // Update the state with the response from the server
+            console.log('Schedule saved and fetched successfully:', response.data);
         } catch (error) {
-            console.error('Error saving to database:', error);
+            console.error('Error saving schedule:', error);
         }
+    };
+
+
+const handleRemove = async (scheduleId) => {
+    try {
+        await axios.delete(`http://localhost:3001/schedules/${scheduleId}`);
+        const newSchedule = schedule.filter(slot => slot._id !== scheduleId);
+        setSchedule(newSchedule);
+        saveToLocalStorage(newSchedule); 
+        console.log('Schedule entry removed successfully');
+    } catch (error) {
+        console.error('Error removing schedule entry:', error);
+    }
+};
+
+
+    const saveToLocalStorage = (schedule) => {
+        localStorage.setItem('schedule', JSON.stringify(schedule));
     };
 
     const handleClassChange = (event) => {
         setClasse(event.target.value);
     };
 
+    const handleSlotChange = (event) => {
+        setCurrentSlot({ ...currentSlot, [event.target.name]: event.target.value });
+    };
+
     const handleSubjectChange = (event) => {
         setSubject(event.target.value);
     };
 
-    const getGroupNameById = (id) => {
-        const group = groups.find(group => group._id === id);
-        return group ? group.name : '';
+    const handleNewTimeSlotChange = (event) => {
+        setNewTimeSlot(event.target.value);
     };
+
+    const addTimeSlot = async () => {
+        if (newTimeSlot && !timeSlots.some(time => time.time === newTimeSlot)) {
+            try {
+                const response = await axios.post('http://localhost:3001/timeslots', { day: 'Any', time: newTimeSlot, classId: classe });
+                setTimeSlots([...timeSlots, response.data]);
+                setNewTimeSlot('');
+            } catch (error) {
+                console.error('Error adding time slot:', error);
+            }
+        }
+    };
+
+    const deleteTimeSlot = async (slot) => {
+        try {
+            await axios.delete(`http://localhost:3001/timeslots/${slot._id}`);
+            setTimeSlots(timeSlots.filter(time => time._id !== slot._id));
+        } catch (error) {
+            console.error('Error deleting time slot:', error);
+        }
+    };
+
+    const findSubjectName = (subjectId) => {
+        console.log("🚀 ~ file: MySchedule.js:168 ~ findSubjectName ~ subjectId:", subjectId);
+        const subject = subjects.find(sub => sub._id === subjectId);
+        console.log("🚀 ~ file: MySchedule.js:161 ~ findSubjectName ~ subject:", subject);
+        return subject ? subject.name : '';
+    };
+
     return (
         <div style={{ padding: '20px' }}>
-            {user.role === 'student' ? (null) :
-                (
-                    <Typography variant="h4" gutterBottom>
-                        My Schedule
-                    </Typography>
-                )}
+            {user.role === 'student' ? null : (
+                <Typography variant="h4" gutterBottom>
+                    My Schedule
+                </Typography>
+            )}
 
             <Grid container spacing={3} style={{ marginBottom: '20px' }}>
                 <Grid item xs={12} sm={6} md={4}>
-                    {user.role === 'student' ? (null) : (
+                    {user.role === 'student' ? null : (
                         <Select
                             labelId="select-classe-label"
                             id="select-classe"
@@ -190,16 +215,37 @@ export default function MySchedule() {
                             )}
                         </Select>
                     )}
-
                 </Grid>
             </Grid>
+
+            <Grid container spacing={3} style={{ marginBottom: '20px' }}>
+                <Grid item xs={12} sm={6} md={4}>
+                    <TextField
+                        label="New Time Slot"
+                        value={newTimeSlot}
+                        onChange={handleNewTimeSlotChange}
+                        fullWidth
+                        variant="outlined"
+                        margin="normal"
+                    />
+                    <Button onClick={addTimeSlot} color="primary" variant="contained">
+                        Add Time Slot
+                    </Button>
+                </Grid>
+            </Grid>
+
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>Day/Time</TableCell>
                             {timeSlots.map((time) => (
-                                <TableCell key={time}>{time}</TableCell>
+                                <TableCell key={time._id}>
+                                    {time.time}
+                                    <IconButton onClick={() => deleteTimeSlot(time)}>
+                                        <Delete />
+                                    </IconButton>
+                                </TableCell>
                             ))}
                         </TableRow>
                     </TableHead>
@@ -208,32 +254,28 @@ export default function MySchedule() {
                             <TableRow key={day}>
                                 <TableCell>{day}</TableCell>
                                 {timeSlots.map((time) => (
-                                    <TableCell key={`${day}-${time}`}>
-                                        {schedule[`${day}-${time}`] ? (
+                                    <TableCell key={`${day}-${time._id}`}>
+                                        {Array.isArray(schedule) && schedule.find(slot => slot.day === day && slot.time === time.time) ? (
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                                 <Typography variant="body2" style={{ flexGrow: 1 }}>
-                                                    {getGroupNameById(schedule[`${day}-${time}`])}
+                                                    {findSubjectName(schedule.find(slot => slot.day === day && slot.time === time.time).subject._id)}
+                                                    {console.log("🚀 ~ file: MySchedule.js:244 ~ MySchedule ~ schedule:", schedule)}
                                                 </Typography>
-                                                {user.role === 'student' ? (null) : (
+                                                {user.role === 'student' ? null : (
                                                     <>
-                                                        <IconButton onClick={() => handleClickOpen(day, time)}>
+                                                        <IconButton onClick={() => handleClickOpen(day, time.time)}>
                                                             <Edit />
                                                         </IconButton>
-                                                        <IconButton onClick={() => handleRemove(day, time)}>
+                                                        <IconButton onClick={() => handleRemove(schedule.find(slot => slot.day === day && slot.time === time.time)._id)}>
                                                             <Delete />
                                                         </IconButton>
                                                     </>
                                                 )}
                                             </div>
                                         ) : (
-                                            user.role === 'student' ? (null) : (
-                                                <Button
-                                                    variant="outlined"
-                                                    onClick={() => handleClickOpen(day, time)}
-                                                    startIcon={<Add />}
-                                                >
-                                                    Add
-                                                </Button>)
+                                            <Button variant="outlined" color="primary" onClick={() => handleClickOpen(day, time.time)}>
+                                                Add
+                                            </Button>
                                         )}
                                     </TableCell>
                                 ))}
@@ -242,43 +284,34 @@ export default function MySchedule() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            Total Hours: {totalHours}
+
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>{subject ? 'Edit Subject' : 'Add Subject'}</DialogTitle>
+                <DialogTitle>Add Subject</DialogTitle>
                 <DialogContent>
                     <Select
                         labelId="select-subject-label"
                         id="select-subject"
                         value={subject}
                         onChange={handleSubjectChange}
-                        label="Subjects"
+                        label="Subject"
                         fullWidth
                         variant="outlined"
                     >
-                        {groupsLoading ? (
-                            <MenuItem disabled>
-                                <CircularProgress size={24} />
-                                Loading subjects...
+                        {subjects.map((sub) => (
+                            <MenuItem key={sub._id} value={sub._id}>
+                                {sub.name}
                             </MenuItem>
-                        ) : (
-                            groups.map((group) => (
-                                <MenuItem key={group._id} value={group._id}>
-                                    {group.name}
-                                </MenuItem>
-                            ))
-                        )}
+                        ))}
                     </Select>
                 </DialogContent>
-                {user.role === 'student' ? (null) : (
-                    <DialogActions>
-                        <Button onClick={handleClose} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={handleSave} color="primary">
-                            Save
-                        </Button>
-                    </DialogActions>
-                )}
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSave} color="primary">
+                        Save
+                    </Button>
+                </DialogActions>
             </Dialog>
         </div>
     );

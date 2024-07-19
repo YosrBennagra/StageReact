@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { List, ListItem, ListItemText, Typography, Divider } from '@mui/material';
+import { List, ListItem, ListItemText, Typography, Divider, ListItemButton } from '@mui/material';
 import { createLesson, fetchGroupLessons } from 'src/store/apps/groups/groupsSlice';
 import LessonCreate from './LessonCreate';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
-const LessonList = ({ showrightSidebar }) => {
+const LessonList = ({ onLessonClick  }) => {
   const dispatch = useDispatch();
   const lessons = useSelector((state) => state.groups.lessons);
   const lessonStatus = useSelector((state) => state.groups.status);
@@ -45,7 +45,9 @@ const LessonList = ({ showrightSidebar }) => {
           {lessons.map((lesson) => (
             <div key={lesson._id}>
               <ListItem>
-                <ListItemText primary={lesson.title} secondary={lesson.description} />
+                <ListItemButton onClick={() => onLessonClick(lesson)}>
+                  <ListItemText primary={lesson.title} secondary={lesson.description} />
+                </ListItemButton>
               </ListItem>
               <Divider />
             </div>

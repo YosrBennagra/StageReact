@@ -50,7 +50,7 @@ export default function MyInstitution() {
       try {
         const response = await axios.get(`http://localhost:3001/institutions/${InstitutionId}`);
         const response2 = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${InstitutionId}`);
-        const responseUser = await axios.get(`http://localhost:3001/users/institutions/${InstitutionId}`);
+        const responseUser = await axios.get(`http://localhost:3001/userinfos/byIns/${InstitutionId}`);
         setReponsables(responseUser.data);
         if (response2.data) {
           setSubjects(response2.data);
@@ -138,16 +138,16 @@ export default function MyInstitution() {
         </Grid>
 
         <Grid item xs={12} sm={4} sx={{ mt: '20px' }} display={'flex'}>
-          <ChildCard title="Responsables of the institution">
-            <InlineItemCard>
+          <ChildCard title="Responsables of the institution" >
+            <InlineItemCard >
               {responsables ? (
                 responsables.map((responsable) => (
                   <Chip
-                    key={responsable.id}
-                    label={responsable.username}
+                    key={responsable.user.id}
+                    label={responsable.user.username}
                     variant="outlined"
                     color="primary"
-                    avatar={<Avatar width="35"  >{responsable.username.charAt(0)}</Avatar>}
+                    avatar={<Avatar width="35"  >{responsable.user.username.charAt(0)}</Avatar>}
                   />
                 ))
               ) : (

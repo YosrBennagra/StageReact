@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   IconButton,
   Box,
@@ -16,10 +16,11 @@ import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import { IconBellRinging, IconPlus } from '@tabler/icons';
 import { Stack } from '@mui/system';
 import AuthRegister from 'src/views/authentication/authForms/AuthRegister';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 const Notifications = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
-
+  const user = useAuthUser();
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
@@ -27,26 +28,17 @@ const Notifications = () => {
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
-
+  const navigate = useNavigate();
+  const handleNav = () => {
+    navigate('/add-account');
+  }
   return (
     <Box>
-      <IconButton
-        size="large"
-        aria-label="show 11 new notifications"
-        color="inherit"
-        aria-controls="msgs-menu"
-        aria-haspopup="true"
-        sx={{
-          ...(anchorEl2 && {
-            color: 'primary.main',
-          }),
-        }}
-        onClick={handleClick2}
-      >
-        <Badge variant="dot" color="primary">
-          <IconPlus size="21" stroke="1.5" />
-        </Badge>
-      </IconButton>
+      {user.role === 'admin' || user.role === 'responsable' ? (<Button onClick={handleNav}>Add account</Button>
+      ) :
+        (<></>)
+      }
+
       {/* ------------------------------------------- */}
       {/* Message Dropdown */}
       {/* ------------------------------------------- */}
@@ -68,7 +60,7 @@ const Notifications = () => {
           <Typography variant="h6">Create An Account</Typography>
         </Stack>
         <Scrollbar sx={{ height: '385px' }}>
-          <AuthRegister/>
+          <AuthRegister />
         </Scrollbar>
       </Menu>
     </Box>

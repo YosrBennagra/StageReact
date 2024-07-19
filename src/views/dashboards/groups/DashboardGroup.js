@@ -26,7 +26,7 @@ import GroupsLeftLayout from '../../../components/apps/TeacherGroupsLayout/Group
 import LessonList from '../../../components/apps/TeacherGroupsLayout/LessonList';
 import PageContainer from '../../../components/container/PageContainer';
 import Breadcrumb from '../../../layouts/full/shared/breadcrumb/Breadcrumb';
-import { fetchGroupLessons, fetchGroupMembers } from '../../../store/apps/groups/groupsSlice';
+import { fetchGroupLessons, fetchGroupMembers, selectLesson } from '../../../store/apps/groups/groupsSlice';
 
 const drawerWidth = 400;
 const secdrawerWidth = 400;
@@ -43,8 +43,6 @@ const DashboardGroup = () => {
     const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
     const dispatch = useDispatch();
     const { selectedLesson, members: globalMembers } = useSelector((state) => state.groups);
-    const user = useAuthUser();
-    console.log("🚀 ~ file: DashboardGroup.js:47 ~ DashboardGroup ~ user:", user);
     const [groupMembers, setGroupMembers] = useState([]);
     const [value, setValue] = useState('1');
     const currentSelectedGroup = useSelector((state) => state.groups.selectedGroup);
@@ -65,13 +63,16 @@ const DashboardGroup = () => {
         }
     }, [globalMembers]);
     const handleDeleteUserFromGroup = async (id) => {
-        console.log('User To Delete: ', id, currentSelectedGroup);
         try {
             await axios.put(`http://localhost:3001/groups/${currentSelectedGroup}/removeUser/${id}`);
             setGroupMembers((prevMembers) => Array.isArray(prevMembers) ? prevMembers.filter((user) => user._id !== id) : []);
         } catch (error) {
             console.error('Error removing user:', error);
         }
+    };
+    const handleLessonClick = (lesson) => {
+        dispatch(selectLesson(lesson));
+        setRightSidebarOpen(true);
     };
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -130,7 +131,7 @@ const DashboardGroup = () => {
                             value="1"
                         >
                             <Divider sx={{ mt: 0 }} />
-                            <LessonList showrightSidebar={() => setRightSidebarOpen(true)} />
+                            <LessonList onLessonClick={handleLessonClick} />
                         </TabPanel>
                         <TabPanel
                             key="2"
@@ -143,7 +144,7 @@ const DashboardGroup = () => {
                                 alignItems: 'center',
                             }}
                         >
-                            {user.role !== 'admin' && user.role !== 'responsable' ? null :
+                            {currentLoggedInUser.role !== 'admin' && currentLoggedInUser.role !== 'responsable' ? null :
                                 <StudentSearch onClick={() => setLeftSidebarOpen(true)} />
                             }
                             <Divider sx={{ my: 0 }} />
@@ -160,7 +161,7 @@ const DashboardGroup = () => {
                                         }
                                         key={userL._id}
                                     >
-                                        {user.role !== 'admin' && user.role !== 'responsable' ?
+                                        {currentLoggedInUser.role !== 'admin' && currentLoggedInUser.role !== 'responsable' ?
                                             <Chip
                                                 sx={{
                                                     m: 1,

@@ -14,7 +14,7 @@ const BCrumb = [
     title: 'Dashboard',
   },
   {
-    title: 'Students',
+    title: 'Responsables',
   },
 ];
 
@@ -37,7 +37,7 @@ export default function Responsables() {
       setStudents(response.data.users);
       setTotalCount(response.data.count);
     } catch (error) {
-      console.error('Error fetching Students:', error);
+      console.error('Error fetching Responsables:', error);
     }
   };
 
@@ -60,11 +60,11 @@ export default function Responsables() {
   };
 
   return (
-    <PageContainer title="Students Dashboard">
-      <Breadcrumb title="Students table" items={BCrumb} />
+    <PageContainer title="Responsables Dashboard">
+      <Breadcrumb title="Responsables table" items={BCrumb} />
       <TextField
         id="outlined-search"
-        placeholder="Search Students"
+        placeholder="Search Responsables"
         size="small"
         type="search"
         variant="outlined"
@@ -79,7 +79,7 @@ export default function Responsables() {
         }}
         fullWidth
       />
-      <ParentCard title="Students List">
+      <ParentCard title="Responsables List">
         <Paper variant="outlined">
           <TableContainer>
             <Table aria-label="simple table" sx={{ whiteSpace: 'nowrap' }}>

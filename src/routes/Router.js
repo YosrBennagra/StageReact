@@ -8,6 +8,7 @@ import DashboardRequests from 'src/views/dashboards/requests/DashboardRequests';
 
 
 
+
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
@@ -132,6 +133,7 @@ const DashboardSalary = Loadable(lazy(() => import('../views/dashboards/salaries
 const MySchedule = Loadable(lazy(() => import('../views/dashboards/MySchedule/MySchedule')));
 const MyResults = Loadable(lazy(() => import('../views/dashboards/Results/MyResults')));
 const MyInstitution = Loadable(lazy(() => import('../views/dashboards/institutions/MyInstitution')));
+const AddAccount = Loadable(lazy(() => import('../views/dashboards/addaccount/Addaccount')));
 
 // assignments
 const CreateAssignment = Loadable(lazy(() => import('../views/pages/assignments/CreateAssignment')));
@@ -154,6 +156,7 @@ const Router = [
       { path: '/student/dashboard/assignments', element: <StudentDashboardAssignments /> },
       { path: '/dashboard/institutions', exact: true, element: <DashboardInstitutions /> },
       { path: '/edit/institution/:InstitutionId', element: <MyInstitution /> },
+      { path: '/add-account', element: <AddAccount /> },
       { path: '/MyResults', element: <MyResults /> },
       { path: '/dashboard/requests', exact: true, element: <DashboardRequests /> },
       { path: '/create/assignment/:id', element: <CreateAssignment /> },

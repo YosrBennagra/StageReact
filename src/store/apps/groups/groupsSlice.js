@@ -39,6 +39,7 @@ const groupsSlice = createSlice({
     selectedGroup: null,
     members: [],
     lessons: [],
+    selectedLesson: null,
     status: 'idle',
     error: null,
   },
@@ -47,6 +48,9 @@ const groupsSlice = createSlice({
       state.selectedGroup = action.payload;
       state.members = [];
       state.lessons = [];
+    },
+    selectLesson(state, action) {
+      state.selectedLesson = action.payload;
     },
     addLesson(state, action) {
       state.lessons.push(action.payload);
@@ -109,6 +113,6 @@ const groupsSlice = createSlice({
   },
 });
 
-export const { selectGroup, addLesson } = groupsSlice.actions;
+export const { selectGroup, addLesson,selectLesson } = groupsSlice.actions;
 
 export default groupsSlice.reducer;
