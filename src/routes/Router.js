@@ -1,6 +1,6 @@
 import React, { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
-
+import AuthOutlet from '@auth-kit/react-router/AuthOutlet'
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import DashboardRequests from 'src/views/dashboards/requests/DashboardRequests';
 

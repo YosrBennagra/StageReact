@@ -7,9 +7,10 @@ import icon5 from '../../assets/images/svgs/icon-favorites.svg';
 import icon6 from '../../assets/images/svgs/icon-speech-bubble.svg';
 import iconGroup from '../../assets/images/svgs/icon-group.svg';
 import { Box, CardContent, Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import axios from 'axios';
+import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
 
 
 export default function DashboardAdmin() {
@@ -125,7 +126,6 @@ export default function DashboardAdmin() {
       roles: ['admin']
     },
   ];
-
   return (
     <Grid container spacing={3} mt={3}>
       {topcards

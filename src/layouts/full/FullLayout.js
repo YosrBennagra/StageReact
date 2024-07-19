@@ -1,12 +1,13 @@
 import { styled, Container, Box, useTheme } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
 import Header from './vertical/header/Header';
 import HorizontalHeader from '../full/horizontal/header/Header';
 import Sidebar from './vertical/sidebar/Sidebar';
 import Customizer from './shared/customizer/Customizer';
 import Navigation from './horizontal/navbar/Navbar';
+import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
 
 const MainWrapper = styled('div')(() => ({
   display: 'flex',
@@ -26,9 +27,12 @@ const PageWrapper = styled('div')(() => ({
 
 const FullLayout = () => {
   const customizer = useSelector((state) => state.customizer);
+  const isAuth = useIsAuthenticated();
 
   const theme = useTheme();
-
+  if (!isAuth) {
+    return <Navigate to="/auth/login" />;
+  }
   return (
     <MainWrapper
       className={customizer.activeMode === 'dark' ? 'darkbg mainwrapper' : 'mainwrapper'}

@@ -32,5 +32,5 @@ root.render(
         </BrowserRouter>
       </AuthProvider>
     </Suspense>
-  </Provider>,
+  </Provider>
 );

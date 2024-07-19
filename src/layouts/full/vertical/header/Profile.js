@@ -9,10 +9,12 @@ import { Stack } from '@mui/system';
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 import Scrollbar from 'src/components/custom-scroll/Scrollbar';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
+import useSignOut from 'react-auth-kit/hooks/useSignOut'
+
 
 const Profile = () => {
   const user = useAuthUser();
-  console.log("🚀 ~ file: Profile.js:15 ~ Profile ~ user:", user);
+  const signOut = useSignOut()
 
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event) => {
@@ -145,6 +147,7 @@ const Profile = () => {
             ))}
             <Box mt={2}>
               <Button
+                onClick={() => signOut()}
                 to="/auth/login"
                 variant="outlined"
                 color="primary"
