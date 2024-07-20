@@ -11,11 +11,22 @@ import { Link, Navigate } from 'react-router-dom';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import axios from 'axios';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated';
+import { fetchUsers } from 'src/store/apps/users/usersSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 export default function DashboardAdmin() {
   const user = useAuthUser();
-  console.log(user.role);
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.users.users);
+  const [notConfirmedUsers, setNotConfirmedUsers] = useState([]);
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  useEffect(() => {
+    setNotConfirmedUsers(users.filter(user => user.status === 'NOT CONFIRMED'));
+  }, [users]);
   const [counts, setCounts] = useState({
     institutions: 0,
     groups: 0,
@@ -23,8 +34,11 @@ export default function DashboardAdmin() {
     responsables: 0,
     teachers: 0,
     students: 0,
-    assignments: 0
+    assignments: 0,
+    requests : 0
   });
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,7 +63,8 @@ export default function DashboardAdmin() {
           responsables: responses[3].data.count,
           teachers: responses[4].data.count,
           students: responses[5].data.count,
-          assignments: responses[6].data.length
+          assignments: responses[6].data.length,
+          requests:notConfirmedUsers.length
         };
 
         setCounts(newCounts);
@@ -105,7 +120,7 @@ export default function DashboardAdmin() {
       href: '/dashboard/requests',
       icon: icon4,
       title: 'Requests',
-      digits: '932',
+      digits: counts.requests,
       bgcolor: 'secondary',
       roles: ['admin', 'teacher']
     },

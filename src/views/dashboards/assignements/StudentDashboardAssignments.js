@@ -63,8 +63,9 @@ export default function StudentDashboardAssignments() {
         assignment.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleGoToAssignment = (id) => {
+    const handleGoToAssignment = async (id) => {
         navigate(`/pass/assignment/${id}`);
+        await axios.post(`http://localhost:3001/assignment-durations/`,{assignment:id , user: user.userId});
     };
 
     return (

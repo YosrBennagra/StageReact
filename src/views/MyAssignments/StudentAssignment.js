@@ -10,6 +10,7 @@ import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { format } from 'date-fns';
+import StickyTimer from './utils/StickyTimer';
 
 export default function StudentAssignment() {
     const [questions, setQuestions] = useState([]);
@@ -24,6 +25,7 @@ export default function StudentAssignment() {
     const [timeSchedule, setTimeSchedule] = useState(null);
     const [description, setDescription] = useState(null);
     const [duration, setDuration] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(null);
     const navigate = useNavigate()
     useEffect(() => {
         const getAssignmentDetails = async () => {
@@ -34,7 +36,6 @@ export default function StudentAssignment() {
 
                     setIsScheduled(response.data.isScheduled);
                     const dateSchedule = response.data.dateSchedule;
-                    console.log("🚀 ~ file: StudentAssignment.js:32 ~ getAssignmentDetails ~ dateSchedule:", dateSchedule);
                     const [dateS, timeS] = dateSchedule.split(' ');
                     setDescription(response.data.description);
                     setDateSchedule(dateS);
@@ -43,8 +44,6 @@ export default function StudentAssignment() {
                     setEndTime(timeEnd);
                     setEndDate(DateEnd);
                     setDuration(response.data.duration);
-                    console.log("🚀 ~ file: StudentAssignment.js:39 ~ getAssignmentDetails ~ timeS:", timeS);
-                    console.log("🚀 ~ file: StudentAssignment.js:39 ~ getAssignmentDetails ~ dateS:", dateS);
                 } else {
                     console.error('Failed to fetch assignment');
                 }
@@ -83,7 +82,29 @@ export default function StudentAssignment() {
         };
         fetchQuestions();
     }, [id]);
+    useEffect(() => {
+        const fetchRemainingDuration = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/assignment-durations/${id}/${user.userId}`);
+                if (response.status === 200) {
+                    console.log("🚀 ~ file: StudentAssignment.js:94 ~ fetchRemainingDuration ~ response:", response.data);
+                    setTimeLeft(response.data.remainingDuration);
+                    if (response.data.remainingDuration <= 0) {
+                        handleOk();
+                    }
+                } else {
+                    console.error('Failed to fetch remaining duration');
+                }
+            } catch (error) {
+                console.error('Error fetching remaining duration:', error);
+            }
+        };
+        fetchRemainingDuration();
 
+        const interval = setInterval(fetchRemainingDuration, 1000);
+
+        return () => clearInterval(interval);
+    }, [id, user.userId]);
     /* Confirm Dialog B */
     const [open, setOpen] = React.useState(false);
 
@@ -124,7 +145,6 @@ export default function StudentAssignment() {
         }
         setOpen(false);
     }
-
     /* Confirm Dialog E */
     return (
         <>
@@ -235,6 +255,7 @@ export default function StudentAssignment() {
                 </DialogActions>
             </Dialog>
             {/* Dialoag E */}
+            <StickyTimer durationInSeconds={timeLeft} />
         </>
     );
 }
