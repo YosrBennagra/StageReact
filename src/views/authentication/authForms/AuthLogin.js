@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import {
   Box,
   Typography,
-  FormGroup,
-  FormControlLabel,
   Button,
   Stack,
   Divider,
   Alert,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import CustomCheckbox from '../../../components/forms/theme-elements/CustomCheckbox';
 import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '../../../components/forms/theme-elements/CustomFormLabel';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
@@ -48,62 +44,20 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
           useremail,
           username,
           user,
-          faSecret,
-          isTwoFactorAuthenticationEnabled,
-          isEmailConfirmed,
-          profilePicture,
           role,
           institution
         } = res.data;
-
-        if (!isEmailConfirmed) {
           signInUser(
             access_token,
             username,
             useremail,
             userId,
             user,
-            faSecret,
-            isEmailConfirmed,
-            profilePicture,
-            role,
-            institution
-          );
-          navigate('/auth/verify');
-        } else if (isTwoFactorAuthenticationEnabled) {
-          sessionStorage.setItem(
-            'tempAuthData',
-            JSON.stringify({
-              token: access_token,
-              username,
-              useremail,
-              userId,
-              user,
-              faSecret,
-              isEmailConfirmed,
-              profilePicture,
-              formData,
-              role,
-              institution
-            }),
-          );
-          navigate('/auth/two-steps2');
-        } else {
-          signInUser(
-            access_token,
-            username,
-            useremail,
-            userId,
-            user,
-            faSecret,
-            isEmailConfirmed,
-            profilePicture,
             role,
             institution
           );
           navigate('/admin/dashboard');
         }
-      }
     } catch (error) {
       console.error('Login Error:', error);
       if (error.response && error.response.status === 401) {
@@ -118,9 +72,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
     useremail,
     userId,
     user,
-    faSecret,
-    isEmailConfirmed,
-    profilePicture,
     role,
     institution
   ) => {
@@ -132,12 +83,8 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
       userState: {
         name: username,
         email: useremail,
-        fasecret: faSecret,
         userId,
         user,
-        is2FaEnabled: false,
-        isAccountVerified: isEmailConfirmed,
-        profilePicture: profilePicture,
         role,
         institution
       },
@@ -189,23 +136,6 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             />
           </Box>
           <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
-            <FormGroup>
-              <FormControlLabel
-                control={<CustomCheckbox defaultChecked />}
-                label="Remeber this Device"
-              />
-            </FormGroup>
-            <Typography
-              component={Link}
-              to="/auth/forgot-password2"
-              fontWeight="500"
-              sx={{
-                textDecoration: 'none',
-                color: 'primary.main',
-              }}
-            >
-              Forgot Password ?
-            </Typography>
           </Stack>
         </Stack>
         <Box>

@@ -1,18 +1,15 @@
-import { Avatar, AvatarGroup, Box, Button, Chip, FormControlLabel, Grid, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import { IconCheck, IconChecks } from '@tabler/icons'
+import { Avatar, Box, Button, Chip, FormControlLabel, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
 import CustomCheckbox from 'src/components/forms/theme-elements/CustomCheckbox'
 import CustomFormLabel from 'src/components/forms/theme-elements/CustomFormLabel'
-import CustomSelect from 'src/components/forms/theme-elements/CustomSelect'
 import CustomTextField from 'src/components/forms/theme-elements/CustomTextField'
 import ChildCard from 'src/components/shared/ChildCard'
 import InlineItemCard from 'src/components/shared/InlineItemCard'
 import ParentCard from 'src/components/shared/ParentCard'
 import Breadcrumb from 'src/layouts/full/shared/breadcrumb/Breadcrumb'
-import { basicsTableData } from 'src/views/tables/tableData'
 
 export default function MyInstitution() {
   const BCrumb = [

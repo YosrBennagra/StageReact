@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button, Divider, Alert, MenuItem } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import {
+  useEffect,
+  useState
+} from 'react';
+import {
+  Box,
+  Typography,
+  Button,
+  Alert,
+  MenuItem
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '../../../components/forms/theme-elements/CustomFormLabel';
 import { Stack } from '@mui/system';
-import AuthSocialButtons from './AuthSocialButtons';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
@@ -16,11 +24,7 @@ const validationSchema = Yup.object().shape({
   firstname: Yup.string().required('First name is required'),
 
   password: Yup.string()
-    .required('Password is required')
-    .matches(
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/,
-      'Password must contain at least one (uppercase letter), one (lowercase letter), one (number), one (special character), and be at least (8 characters long)',
-    ),
+    .required('Password is required'),
   confirmPassword: Yup.string()
     .required('Confirmation Password is required')
     .oneOf([Yup.ref('password'), null], 'Passwords must match'),
@@ -76,7 +80,7 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
           lastname,
           email,
           password,
-          Role: Role, // Ensure Role is set to the lowercase Role from the form
+          Role: Role,
         };
 
         const response = await axios.post(`http://localhost:3001/users/signup`, postData);
@@ -91,30 +95,16 @@ const AuthRegister = ({ title, subtitle, subtext }) => {
             institution: resIns.data.institution,
           };
 
-          console.log("🚀 ~ onSubmit: ~ responsableData:", responsableData);
-
-          // Call userinfos endpoint for responsable
-          const responseData = await axios.post('http://localhost:3001/userinfos', responsableData);
-          console.log('🚀 ~ onSubmit: ~ responseData:', responseData);
+          await axios.post('http://localhost:3001/userinfos', responsableData);
         }
-
         if (Role === 'student') {
           const studentData = {
             user: response.data._id,
             classroom: classId,
           };
+          await axios.post('http://localhost:3001/userinfos', studentData);
 
-          console.log("🚀 ~ onSubmit: ~ studentData:", studentData);
-
-          // Call userinfos endpoint for student
-          const responseData = await axios.post('http://localhost:3001/userinfos', studentData);
-          console.log('🚀 ~ onSubmit: ~ responseData:', responseData);
         }
-
-        await axios.post('http://localhost:3001/email-confirmation/resend-confirmation-link', {
-          email,
-        });
-
       } catch (error) {
         console.error('Registration error:', error.response.data.message);
         if (

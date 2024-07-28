@@ -3,7 +3,7 @@ import { Box, Typography, List, ListItem, ListItemText, Link, Divider, Grid, Sta
 import axios from 'axios';
 import { IconDownload, IconPigMoney } from '@tabler/icons';
 
-const EmailContent = ({ lesson }) => {
+const GroupContent = ({ lesson }) => {
   const [fileInfos, setFileInfos] = useState({});
 
   useEffect(() => {
@@ -49,19 +49,6 @@ const EmailContent = ({ lesson }) => {
       {lesson.files && lesson.files.length > 0 && (
         <Box mt={2}>
           <Typography variant="h6">Attachments ({lesson?.files?.length})</Typography>
-          <List>
-            {lesson.files.map((file) => (
-              <ListItem key={file}>
-                <ListItemText
-                  primary={
-                    <Link href={`http://localhost:3001/attachment/files/${file}`} target="_blank" rel="noopener noreferrer">
-                      {fileInfos[file]?.filename || 'Loading...'}
-                    </Link>
-                  }
-                />
-              </ListItem>
-            ))}
-          </List>
           <Grid container spacing={3}>
             {lesson.files?.map((file) => {
               return (
@@ -87,4 +74,4 @@ const EmailContent = ({ lesson }) => {
   );
 };
 
-export default EmailContent;
+export default GroupContent;
