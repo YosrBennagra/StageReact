@@ -1,6 +1,7 @@
-import { Avatar, Box, Button, Chip, FormControlLabel, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Avatar, Box, Button, Chip, FormControlLabel, Grid, Input, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser'
 import { useParams } from 'react-router'
 
 import CustomCheckbox from 'src/components/forms/theme-elements/CustomCheckbox'
@@ -37,7 +38,10 @@ export default function MyInstitution() {
   const [subjects, setSubjects] = useState([]);
   const [isDep, setIsDep] = useState(false);
   const [newSubject, setNewSubject] = useState('');
+  const [institution, setInstitution] = useState('')
   const [newCoef, setNewCoef] = useState(0);
+  const user = useAuthUser();
+  const [newInstitutionName, setNewInstitutionName] = useState('');
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
     setIsDep(!isDep);
@@ -48,6 +52,7 @@ export default function MyInstitution() {
         const response = await axios.get(`http://localhost:3001/institutions/${InstitutionId}`);
         const response2 = await axios.get(`http://localhost:3001/subjects/getsubjectsBy/${InstitutionId}`);
         const responseUser = await axios.get(`http://localhost:3001/userinfos/byIns/${InstitutionId}`);
+        setInstitution(response.data)
         setReponsables(responseUser.data);
         if (response2.data) {
           setSubjects(response2.data);
@@ -74,6 +79,27 @@ export default function MyInstitution() {
       console.error('Error adding subject:', error);
     }
   };
+
+  const handleDeleteResponsable = async (resId) => {
+    try {
+      await axios.delete(`http://localhost:3001/users/deleteuser/${resId}`);
+      await axios.delete(`http://localhost:3001/userinfos/user/${resId}`);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleteing responsable:', error);
+    }
+  };
+  const handleUpdateInstitution = async (newInstitutionName) => {
+    try {
+      const response = await axios.put(`http://localhost:3001/institutions/${institution._id}`, {
+        name: newInstitutionName,
+      });
+      setInstitution(response.data);
+    } catch (error) {
+      console.error('Error updating institution:', error);
+    }
+  };
+  
   return (
     <>
       <Breadcrumb title="My Institution" items={BCrumb}>
@@ -81,6 +107,8 @@ export default function MyInstitution() {
           <img width={'165px'} />
         </Box>
       </Breadcrumb>
+      <CustomFormLabel htmlFor="institution">Institution Name :</CustomFormLabel>
+      <CustomTextField variant="outlined" value={institution.name} onChange={(e) => handleUpdateInstitution(e.target.value)}></CustomTextField>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={8} sx={{ mt: '20px' }}>
           <ParentCard title='Add a subject'>
@@ -96,14 +124,6 @@ export default function MyInstitution() {
                 sx={{ mb: '10px' }}
                 onChange={(e) => setNewCoef(e.target.value)}
               />
-{/*               <CustomFormLabel >Teacher</CustomFormLabel>
-              <CustomSelect
-                type="number"
-                variant="outlined"
-                fullWidth
-                sx={{ mb: '10px' }}
-                onChange={(e) => setNewCoef(e.target.value)}
-              /> */}
               {
                 isDep ?
                   <>
@@ -140,11 +160,12 @@ export default function MyInstitution() {
               {responsables ? (
                 responsables.map((responsable) => (
                   <Chip
-                    key={responsable.user.id}
+                    key={responsable.user._id}
                     label={responsable.user.username}
                     variant="outlined"
                     color="primary"
                     avatar={<Avatar width="35"  >{responsable.user.username.charAt(0)}</Avatar>}
+                    onDelete={user.role === 'admin' ? () => handleDeleteResponsable(responsable.user._id) : undefined}
                   />
                 ))
               ) : (

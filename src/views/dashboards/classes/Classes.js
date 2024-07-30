@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar, Box, InputAdornment, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow, TextField, Typography
 } from '@mui/material';
@@ -14,35 +14,31 @@ const BCrumb = [
     title: 'Dashboard',
   },
   {
-    title: 'Responsables',
+    title: 'Classrooms',
   },
 ];
 
-export default function Responsables() {
-  const [students, setStudents] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [search, setSearch] = React.useState('');
-  const [totalCount, setTotalCount] = React.useState(0);
+export default function Classrooms() {
+  const [classrooms, setClassrooms] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [search, setSearch] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchStudents = async (page, rowsPerPage, search) => {
+  const fetchClassrooms = async (page, rowsPerPage, search) => {
     try {
-      const response = await axios.get('http://localhost:3001/users/role/responsable', {
-        params: {
-          search: search,
-          limit: rowsPerPage,
-          offset: page * rowsPerPage
-        }
+      const response = await axios.get(`http://localhost:3001/classrooms`, {
+        params: { page, rowsPerPage, search }
       });
-      setStudents(response.data.users);
-      setTotalCount(response.data.count);
+      setClassrooms(response.data.classrooms);
+      setTotalCount(response.data.total);
     } catch (error) {
-      console.error('Error fetching Responsables:', error);
+      console.error('Error fetching classrooms:', error);
     }
   };
 
   useEffect(() => {
-    fetchStudents(page, rowsPerPage, search);
+    fetchClassrooms(page, rowsPerPage, search);
   }, [page, rowsPerPage, search]);
 
   const handleChangePage = (event, newPage) => {
@@ -60,11 +56,11 @@ export default function Responsables() {
   };
 
   return (
-    <PageContainer title="Responsables Dashboard">
-      <Breadcrumb title="Responsables table" items={BCrumb} />
+    <PageContainer title="Classrooms Dashboard">
+      <Breadcrumb title="Classrooms Table" items={BCrumb} />
       <TextField
         id="outlined-search"
-        placeholder="Search Responsables"
+        placeholder="Search Classrooms"
         size="small"
         type="search"
         variant="outlined"
@@ -79,41 +75,47 @@ export default function Responsables() {
         }}
         fullWidth
       />
-      <ParentCard title="Responsables List">
+      <ParentCard title="Classrooms List">
         <Paper variant="outlined">
           <TableContainer>
             <Table aria-label="simple table" sx={{ whiteSpace: 'nowrap' }}>
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <Typography variant="h6">Users</Typography>
+                    <Typography variant="h6">Classroom Name</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="h6">Full Name</Typography>
+                    <Typography variant="h6">Groups</Typography>
                   </TableCell>
-
                 </TableRow>
               </TableHead>
               <TableBody>
-                {students.map((student) => (
-                  <TableRow key={student.id}>
+                {classrooms.map((classroom) => (
+                  <TableRow key={classroom._id}>
                     <TableCell>
-                      <Stack direction="row" spacing={2}>
-                        <Avatar src={student.imgsrc} alt={student.imgsrc} width="35" />
-                        <Box>
-                          <Typography variant="h6" fontWeight="600">
-                            {student.username}
-                          </Typography>
-                          <Typography color="textSecondary" variant="subtitle2">
-                            {student.email}
-                          </Typography>
-                        </Box>
-                      </Stack>
+                      <Typography variant="h6" fontWeight="600">
+                        {classroom.name}
+                      </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography color="textSecondary" variant="h6" fontWeight="400">
-                        {student.firstname} {student.lastname}
-                      </Typography>
+                      {classroom.groups && classroom.groups.length > 0 ? (
+                        classroom.groups.map((group) => (
+                          <Box key={group._id}>
+                            <Typography variant="body2">
+                              Group Name: {group.name}
+                            </Typography>
+                            {group.subject && (
+                              <Typography variant="body2" color="textSecondary">
+                                Subject: {group.subject.name}
+                              </Typography>
+                            )}
+                          </Box>
+                        ))
+                      ) : (
+                        <Typography variant="body2" color="textSecondary">
+                          No groups
+                        </Typography>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -122,7 +124,7 @@ export default function Responsables() {
                 <TableRow>
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                    colSpan={6}
+                    colSpan={3}
                     count={totalCount}
                     rowsPerPage={rowsPerPage}
                     page={page}

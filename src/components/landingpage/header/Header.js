@@ -6,14 +6,11 @@ import {
   Container,
   Box,
   Stack,
-  useMediaQuery,
-  IconButton,
   Drawer,
 } from '@mui/material';
-import Logo from 'src/layouts/full/shared/logo/Logo';
+
 import Navigations from './Navigations';
-import MobileSidebar from './MobileSidebar';
-import { IconMenu2 } from '@tabler/icons';
+
 
 const LpHeader = () => {
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -31,15 +28,7 @@ const LpHeader = () => {
     color: theme.palette.text.secondary,
   }));
 
-  //   sidebar
-  const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
-
   const [open, setOpen] = React.useState(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -68,18 +57,10 @@ const LpHeader = () => {
     <AppBarStyled position="sticky" elevation={y ? 8 : 0}>
       <Container maxWidth="lg">
         <ToolbarStyled>
-          <Logo />
           <Box flexGrow={1} />
-          {lgDown ? (
-            <IconButton color="inherit" aria-label="menu" onClick={handleDrawerOpen}>
-              <IconMenu2 size="20" />
-            </IconButton>
-          ) : null}
-          {lgUp ? (
-            <Stack spacing={1} direction="row" alignItems="center">
-              <Navigations />
-            </Stack>
-          ) : null}
+          <Stack spacing={1} direction="row" alignItems="center">
+            <Navigations />
+          </Stack>
         </ToolbarStyled>
       </Container>
       <Drawer
@@ -95,7 +76,7 @@ const LpHeader = () => {
           },
         }}
       >
-        <MobileSidebar />
+
       </Drawer>
     </AppBarStyled>
   );

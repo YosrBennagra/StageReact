@@ -9,6 +9,7 @@ import icon3 from '../../assets/images/svgs/icon-briefcase.svg';
 import icon1 from '../../assets/images/svgs/icon-connect.svg';
 import icon5 from '../../assets/images/svgs/icon-favorites.svg';
 import iconGroup from '../../assets/images/svgs/icon-group.svg';
+import iconClass from '../../assets/images/svgs/icon-class.svg';
 import icon4 from '../../assets/images/svgs/icon-mailbox.svg';
 import icon6 from '../../assets/images/svgs/icon-speech-bubble.svg';
 import icon2 from '../../assets/images/svgs/icon-user-male.svg';
@@ -54,11 +55,12 @@ export default function DashboardAdmin() {
         const requests = endpoints.map((endpoint) => axios.get(endpoint));
 
         const responses = await Promise.all(requests);
+        console.log("🚀 ~ file: DashboardAdmin.js:58 ~ fetchData ~ responses:", responses[2]);
 
         const newCounts = {
           institutions: responses[0].data.length,
           groups: responses[1].data.length,
-          classrooms: responses[2].data.length,
+          classrooms: responses[2].data.total,
           responsables: responses[3].data.count,
           teachers: responses[4].data.count,
           students: responses[5].data.count,
@@ -127,7 +129,7 @@ export default function DashboardAdmin() {
     },
     {
       href: '/dashboard/groups',
-      icon: iconGroup,
+      icon: iconClass,
       title: 'Groups',
       digits: counts.groups,
       bgcolor: 'secondary',

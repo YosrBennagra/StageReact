@@ -46,9 +46,11 @@ export default function DashboardAssignments() {
       try {
         const response = await axios.get('http://localhost:3001/assignments');
         setAssignments(response.data);
+        console.log("🚀 ~ file: DashboardAssignments.js:52 ~ fetchAssignments ~ response:", response.data);
       } catch (error) {
         console.error('Error fetching assignments:', error);
       }
+
     };
 
     fetchAssignments();
@@ -118,6 +120,9 @@ export default function DashboardAssignments() {
                   <TableCell>
                     <Typography variant="h6">Due Date</Typography>
                   </TableCell>
+                  <TableCell>
+                    <Typography variant="h6">Created By</Typography>
+                  </TableCell>
                   <TableCell >
                     <Typography variant="h6"></Typography>
                   </TableCell>
@@ -165,7 +170,23 @@ export default function DashboardAssignments() {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography variant="h6">{ format(new Date(assignment.createAtdate), `d MMM yyyy HH:mm`) }</Typography>
+                      <Typography variant="h6">{format(new Date(assignment.createAtdate), `d MMM yyyy HH:mm`)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      {assignment.createdBy ? (
+                        <>
+                          <Typography variant="h6">
+                            {assignment.createdBy.firstname} {assignment.createdBy.lastname}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary">
+                            {assignment.createdBy.email}
+                          </Typography>
+                        </>
+                      ) : (
+                        <Typography variant="h6" color="textSecondary">
+                          No Creator Info
+                        </Typography>
+                      )}
                     </TableCell>
                     <TableCell>
                       <IconButton >
