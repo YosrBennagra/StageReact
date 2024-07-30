@@ -31,7 +31,7 @@ const FullLayout = () => {
 
   const theme = useTheme();
   if (!isAuth) {
-    return <Navigate to="/auth/login" />;
+    return <Navigate to="/landingpage" />;
   }
   return (
     <MainWrapper

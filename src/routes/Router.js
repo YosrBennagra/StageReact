@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import DashboardRequests from 'src/views/dashboards/requests/DashboardRequests';
 
+
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
@@ -45,6 +46,8 @@ const AddAccount = Loadable(lazy(() => import('../views/dashboards/addaccount/Ad
 // assignments
 const CreateAssignment = Loadable(lazy(() => import('../views/pages/assignments/CreateAssignment')));
 const StudentAssignment = Loadable(lazy(() => import('../views/MyAssignments/StudentAssignment')));
+const Classes = Loadable(lazy(() => import('../views/dashboards/classes/Classes')));
+
 const Router = [
   {
     path: '/',
@@ -56,6 +59,7 @@ const Router = [
       { path: '/teachers', exact: true, element: <Teachers /> },
       { path: '/dashboard/students', exact: true, element: <DashboardStudent /> },
       { path: '/dashboard/groups', exact: true, element: <DashboardGroup /> },
+      { path: '/dashboard/classes', exact: true, element: <Classes /> },
       { path: '/dashboard/assignments', exact: true, element: <DashboardAssignments /> },
       { path: '/dashboard/salaries', exact: true, element: <DashboardSalary /> },
       { path: '/student/dashboard/assignments', element: <StudentDashboardAssignments /> },

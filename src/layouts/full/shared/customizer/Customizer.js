@@ -14,9 +14,11 @@ import { IconPlus } from '@tabler/icons';
 import { useLocation } from 'react-router';
 import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
 import axios from 'axios';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
 
 const Customizer = () => {
+  const user = useAuthUser();
   /* Institution B */
   const [formDataIns, setFormDataIns] = React.useState({ name: '' });
   const [openins, setOpenIns] = React.useState(false);
@@ -44,8 +46,12 @@ const Customizer = () => {
   const onSubmit = async (event) => {
     event.preventDefault();
     console.log(formData);
+    const newFormData = { 
+      ...formData,
+      createdBy:user.userId
+    }
     try {
-      const response = await axios.post(`http://localhost:3001/assignments`, formData);
+      const response = await axios.post(`http://localhost:3001/assignments`, newFormData);
       console.log(response);
       window.location.reload();
     } catch (error) {

@@ -32,7 +32,7 @@ const BannerContent = () => {
           <Typography color={'secondary'}>
             <IconRocket size={'21'} />
           </Typography>{' '}
-          Kick start your project with
+          Kick start your Learning Program with
         </Typography>
 
         <Typography
@@ -49,9 +49,9 @@ const BannerContent = () => {
         >
           Most powerful &{' '}
           <Typography component={'span'} variant="none" color={'primary'}>
-            Developer friendly
+            User friendly
           </Typography>{' '}
-          dashboard
+          Plateform
         </Typography>
       </motion.div>
       <Box pt={4} pb={3}>
@@ -66,8 +66,7 @@ const BannerContent = () => {
           }}
         >
           <Typography variant="h5" fontWeight={300}>
-            Modernize comes with light & dark color skins, well designed dashboards, applications
-            and pages.
+          Our Platform is a comprehensive tool designed to streamline the operations of educational institutions. It enables efficient management of students, teachers, and administrative staff, facilitating a smooth educational experience. The platform offers features such as user management, assignment creation, lesson organization with attachment handling, and classroom management. This all-in-one solution supports interactive learning and resource sharing, making it an essential tool for modern educational environments.
           </Typography>
         </motion.div>
       </Box>
@@ -83,12 +82,8 @@ const BannerContent = () => {
       >
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={3}>
           <StyledButton variant="contained" color="primary" href="#">
-            Buy Now
+            Contact Us
           </StyledButton>
-
-          <StyledButton2 variant="outlined" component={NavLink} to="/dashboards/modern">
-            Live Preview
-          </StyledButton2>
         </Stack>
       </motion.div>
     </Box>

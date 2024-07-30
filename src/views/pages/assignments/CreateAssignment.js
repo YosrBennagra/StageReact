@@ -30,11 +30,6 @@ export default function CreateAssignment() {
     const [duration, setDuration] = useState(0);
     const [isDuration, setIsDuration] = useState(false);
     useEffect(() => {
-        console.log('All groups:', allGroups);
-        console.log('All users:', allUsers);
-        console.log('Assigned groups:', assignedGroups);
-        console.log('Assigned users:', assignedUsers);
-
         // Create options for all groups and users
         const groupOptions = allGroups.map((group) => ({
             ...group,

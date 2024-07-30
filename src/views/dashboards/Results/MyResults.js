@@ -1,8 +1,6 @@
-import { Avatar, AvatarGroup, Box, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { IconSearch } from '@tabler/icons';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import axios from 'axios';
-import { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import PageContainer from 'src/components/container/PageContainer';
 import ParentCard from 'src/components/shared/ParentCard';
@@ -15,7 +13,12 @@ export default function MyResults() {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/results/student/${user.userId}`);
+                let response;
+                if (user.Role === 'admin' || user.Role === 'responsable') {
+                    response = await axios.get('http://localhost:3001/results');
+                } else {
+                    response = await axios.get(`http://localhost:3001/results/student/${user.userId}`);
+                }
                 setResults(response.data);
                 console.log("🚀 ~ file: MyResults.js:19 ~ fetchResults ~ response:", response.data);
             } catch (error) {
@@ -26,11 +29,14 @@ export default function MyResults() {
         };
 
         fetchResults();
-    }, [user.userId]);
+    }, [user.Role, user.userId]);
 
+    if (loading) {
+        return <div>Loading...</div>;
+    }
     return (
-        <PageContainer title="Students Dashboard">
-            <ParentCard title="Students List">
+        <PageContainer title="Results Dashboard">
+            <ParentCard title="Results List">
                 <Paper variant="outlined">
                     <TableContainer>
                         <Table aria-label="simple table" sx={{ whiteSpace: 'nowrap' }}>
