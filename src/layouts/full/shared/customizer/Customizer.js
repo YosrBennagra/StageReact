@@ -150,7 +150,7 @@ const Customizer = () => {
                   label="Institution name"
                   type="text"
                   fullWidth
-                  onChange={(e) => setFormDataIns({ ...formDataIns, title: e.target.value })}
+                  onChange={(e) => setFormDataIns({ ...formDataIns, name: e.target.value })}
                   required
                   sx={{
                     '& input:valid + fieldset': {
