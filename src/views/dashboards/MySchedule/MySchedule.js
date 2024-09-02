@@ -43,21 +43,24 @@ export default function MySchedule() {
         const fetchClasses = async () => {
             try {
                 const response = await axios.get('http://localhost:3001/classrooms');
+                const classData = Array.isArray(response.data) ? response.data : []; // Ensure the response is an array
                 if (user.role === 'student') {
                     const responseUser = await axios.get(`http://localhost:3001/userinfos/byuser/${user.userId}`);
                     setClasse(responseUser.data.classroom);
+                    console.log("🚀 ~ file: MySchedule.js:49 ~ fetchClasses ~ responseUser:", responseUser);
                 }
-                setClasses(response.data);
+                setClasses(classData);
                 setLoading(false);
-                console.log('Classes fetched:', response.data);
+                console.log('Classes fetched:', classData);
             } catch (error) {
                 console.error('Error fetching classes:', error);
                 setLoading(false);
             }
         };
-
+    
         fetchClasses();
     }, [user.userId, user.role]);
+    
 
     useEffect(() => {
         if (classe) {
