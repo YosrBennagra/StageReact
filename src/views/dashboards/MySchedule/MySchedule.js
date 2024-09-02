@@ -43,7 +43,7 @@ export default function MySchedule() {
         const fetchClasses = async () => {
             try {
                 const response = await axios.get('http://localhost:3001/classrooms');
-                const classData = Array.isArray(response.data) ? response.data : []; // Ensure the response is an array
+                const classData = Array.isArray(response.data.classrooms) ? response.data.classrooms : []; // Extract classrooms array
                 if (user.role === 'student') {
                     const responseUser = await axios.get(`http://localhost:3001/userinfos/byuser/${user.userId}`);
                     setClasse(responseUser.data.classroom);
@@ -57,10 +57,11 @@ export default function MySchedule() {
                 setLoading(false);
             }
         };
-    
+
         fetchClasses();
     }, [user.userId, user.role]);
-    
+
+
 
     useEffect(() => {
         if (classe) {
@@ -122,17 +123,17 @@ export default function MySchedule() {
     };
 
 
-const handleRemove = async (scheduleId) => {
-    try {
-        await axios.delete(`http://localhost:3001/schedules/${scheduleId}`);
-        const newSchedule = schedule.filter(slot => slot._id !== scheduleId);
-        setSchedule(newSchedule);
-        saveToLocalStorage(newSchedule); 
-        console.log('Schedule entry removed successfully');
-    } catch (error) {
-        console.error('Error removing schedule entry:', error);
-    }
-};
+    const handleRemove = async (scheduleId) => {
+        try {
+            await axios.delete(`http://localhost:3001/schedules/${scheduleId}`);
+            const newSchedule = schedule.filter(slot => slot._id !== scheduleId);
+            setSchedule(newSchedule);
+            saveToLocalStorage(newSchedule);
+            console.log('Schedule entry removed successfully');
+        } catch (error) {
+            console.error('Error removing schedule entry:', error);
+        }
+    };
 
 
     const saveToLocalStorage = (schedule) => {
